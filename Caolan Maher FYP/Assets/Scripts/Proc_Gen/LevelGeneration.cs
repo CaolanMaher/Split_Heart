@@ -25,10 +25,13 @@ public class LevelGeneration : MonoBehaviour
     public float minY;
 
     // bool to see if we should keep generating the level
-    private bool generationIsStopped = false;
+    public bool generationIsStopped = false;
 
     // layermask for overlapsphere function
     public LayerMask roomMask;
+
+    // count how many times we go down
+    public int downConter;
 
     private void Start()
     {
@@ -54,6 +57,9 @@ public class LevelGeneration : MonoBehaviour
             //print(transform.position.x + " : " + maxX);
             if(transform.position.x < maxX)
             {
+                // reset down counter
+                downConter = 0;
+
                 // we are within the maxX so we can move right
                 Vector2 newPos = new Vector2(transform.position.x + moveAmountX, transform.position.y);
                 transform.position = newPos;
@@ -93,6 +99,9 @@ public class LevelGeneration : MonoBehaviour
             //print(transform.position.x + " : " + minX);
             if (transform.position.x > minX)
             {
+                // reset down counter
+                downConter = 0;
+
                 // we are within the minX so we can move left
                 Vector2 newPos = new Vector2(transform.position.x - moveAmountX, transform.position.y);
                 transform.position = newPos;
@@ -117,6 +126,10 @@ public class LevelGeneration : MonoBehaviour
         }
         else if(direction == 5)
         {
+
+            // increment down counter
+            downConter++;
+
             //print(transform.position.y + " : " + minY);
             if (transform.position.y > minY)
             {
@@ -126,19 +139,34 @@ public class LevelGeneration : MonoBehaviour
                 // check if the room found has a bottom opening
                 if (roomDetection.GetComponent<RoomType>().type != 1 && roomDetection.GetComponent<RoomType>().type != 3)
                 {
-                    // if not, destroy the room
-                    roomDetection.GetComponent<RoomType>().RoomDestruction();
 
-                    // we want to create a room that has a bottom opening
-                    // we want an index of 1 or 3
-                    int randomBottomRoom = Random.Range(1, 4);
-                    // if we get 2
-                    if(randomBottomRoom == 2)
+                    // has our level gen has moved down more than 2 times in a row
+                    if(downConter >= 2)
                     {
-                        // make it into 1
-                        randomBottomRoom = 1;
+                        // if so, we want to spawn a room that has openings on all 4 ways
+                        // previously, if we went down twice or more, there's a chance a room with no bottom opening could spawn
+                        // resulting in a dead end
+
+                        // we destroy the room that might have not had a bottom opening
+                        roomDetection.GetComponent<RoomType>().RoomDestruction();
+                        Instantiate(rooms[3], transform.position, Quaternion.identity);
                     }
-                    Instantiate(rooms[randomBottomRoom], transform.position, Quaternion.identity);
+                    else
+                    {
+                        // if not, we destroy the last room and spwan a room with all 4 openings or with LRB
+                        roomDetection.GetComponent<RoomType>().RoomDestruction();
+
+                        // we want to create a room that has a bottom opening
+                        // we want an index of 1 or 3
+                        int randomBottomRoom = Random.Range(1, 4);
+                        // if we get 2
+                        if (randomBottomRoom == 2)
+                        {
+                            // make it into 1
+                            randomBottomRoom = 1;
+                        }
+                        Instantiate(rooms[randomBottomRoom], transform.position, Quaternion.identity);
+                    }
                 }
 
                 // We are within the minY so we can move down
