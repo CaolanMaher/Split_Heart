@@ -33,6 +33,9 @@ public class LevelGeneration : MonoBehaviour
     // count how many times we go down
     public int downConter;
 
+    public float timeBetweenRoomSpawn;
+    public float spawnRoomCooldown;
+
     private void Start()
     {
         // get a random starting point, set this objects position to it, and spawn our first room
@@ -40,11 +43,29 @@ public class LevelGeneration : MonoBehaviour
         transform.position = startingPositions[randStartingPos].position;
         Instantiate(rooms[0], transform.position, Quaternion.identity);
 
+        //print(currentRoom);
+
         // set direction to random number between 1 and 5
         direction = Random.Range(1, 6);
 
         // spawn new room
         Move();
+    }
+
+    private void Update()
+    {
+        if (timeBetweenRoomSpawn <= 0 && !generationIsStopped)
+        {
+            Move();
+            timeBetweenRoomSpawn = spawnRoomCooldown;
+        }
+        else
+        {
+            if (!generationIsStopped)
+            {
+                timeBetweenRoomSpawn -= Time.deltaTime;
+            }
+        }
     }
 
     // move to spawn a new room
@@ -67,6 +88,8 @@ public class LevelGeneration : MonoBehaviour
                 // all rooms have openings on right, so we pick on at random
                 int rand = Random.Range(0, rooms.Length);
                 Instantiate(rooms[rand], transform.position, Quaternion.identity);
+
+                //print(currentRoom);
 
                 // set direction to random number between 1 and 6
                 direction = Random.Range(1, 6);
@@ -110,6 +133,8 @@ public class LevelGeneration : MonoBehaviour
                 int rand = Random.Range(0, rooms.Length);
                 Instantiate(rooms[rand], transform.position, Quaternion.identity);
 
+                //print(currentRoom);
+
                 // set direction to random number between 3 and 4
                 // this is so that if it goes left, it can't go right and overwrite itself
                 direction = Random.Range(3, 5);
@@ -133,8 +158,13 @@ public class LevelGeneration : MonoBehaviour
             //print(transform.position.y + " : " + minY);
             if (transform.position.y > minY)
             {
+
                 // Get the room we just created before this
                 Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
+
+                //print(transform.position);
+
+                //print(currentRoom.transform.childCount);
 
                 // check if the room found has a bottom opening
                 if (roomDetection.GetComponent<RoomType>().type != 1 && roomDetection.GetComponent<RoomType>().type != 3)
@@ -191,15 +221,26 @@ public class LevelGeneration : MonoBehaviour
             }
         }
 
+        //print(currentRoom.transform.GetChild(0).gameObject);
+
         //print("Planning to make room at: " + transform.position.x + " " + transform.position.y);
 
         // check if we are still generating the level
+        /*
         if (!generationIsStopped)
         {
             // if we can...
 
             // spawn new room
+            StartCoroutine(DoMove());
             Move();
         }
+        */
+    }
+
+    IEnumerator DoMove()
+    {
+        yield return new WaitForSeconds(0.2f);
+        Move();
     }
 }

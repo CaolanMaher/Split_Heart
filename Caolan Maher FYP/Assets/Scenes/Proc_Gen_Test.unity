@@ -509,10 +509,10 @@ MonoBehaviour:
   - {fileID: 751496622}
   - {fileID: 2045195908}
   rooms:
-  - {fileID: 5532934665683726272, guid: 13bc6689a9234ed42ac758d81e6dd1e8, type: 3}
-  - {fileID: 5698800553766722788, guid: 99e84b19e04de98449934f52a0b93289, type: 3}
-  - {fileID: 5452145679196279963, guid: 16f1e0a7f44e74b46941ad31575a8b87, type: 3}
-  - {fileID: 59055632217995475, guid: a96d5399642ad74489e2165d4485f20a, type: 3}
+  - {fileID: 2511817107949443230, guid: 0c94feb7b50858949bfb03a1e07de6d2, type: 3}
+  - {fileID: 7958345893954635599, guid: 36688603fd3e1ef408cdcc068d3ad03e, type: 3}
+  - {fileID: 7236114967776074464, guid: a6ba1990af585694a82366dbaac61c10, type: 3}
+  - {fileID: 5625912901471898772, guid: a9dc019d076a53740a8728b77046d5ce, type: 3}
   moveAmountX: 10
   moveAmountY: 10
   minX: -5
@@ -523,6 +523,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   downConter: 0
+  timeBetweenRoomSpawn: 0
+  spawnRoomCooldown: 0.2
 --- !u!1 &785935594
 GameObject:
   m_ObjectHideFlags: 0
