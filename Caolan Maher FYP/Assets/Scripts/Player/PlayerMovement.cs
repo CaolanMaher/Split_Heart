@@ -80,7 +80,10 @@ public class PlayerMovement : MonoBehaviour
                 transform.eulerAngles.z
             );
 
-            playerAnimator.SetBool("isRunning", true);
+            //if (playerRigidbody.velocity.x < 0)
+            //{
+                playerAnimator.SetBool("isRunning", true);
+            //}
         }
         else if (dirX > 0)
         {
@@ -90,7 +93,10 @@ public class PlayerMovement : MonoBehaviour
                 transform.eulerAngles.z
             );
 
-            playerAnimator.SetBool("isRunning", true);
+            //if (playerRigidbody.velocity.x > 0)
+            //{
+                playerAnimator.SetBool("isRunning", true);
+            //}
         }
         else
         {

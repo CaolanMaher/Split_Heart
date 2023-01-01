@@ -155,7 +155,7 @@ public class EnemyCombat : MonoBehaviour
             if (hit.collider)
             {
                 //print("Hit Player");
-                hit.collider.gameObject.GetComponent<PlayerMovement>().TakeDamage(attackDamage);
+                //hit.collider.gameObject.GetComponent<PlayerMovement>().TakeDamage(attackDamage);
             }
             StartCoroutine(StartAttackCooldown());
         }
@@ -167,7 +167,7 @@ public class EnemyCombat : MonoBehaviour
             if (hit.collider)
             {
                 //print("Hit Player");
-                hit.collider.gameObject.GetComponent<PlayerMovement>().TakeDamage(attackDamage);
+                //hit.collider.gameObject.GetComponent<PlayerMovement>().TakeDamage(attackDamage);
             }
             StartCoroutine(StartAttackCooldown());
         }

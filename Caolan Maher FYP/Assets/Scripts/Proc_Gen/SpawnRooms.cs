@@ -10,7 +10,10 @@ public class SpawnRooms : MonoBehaviour
 {
 
     public LayerMask roomMask;
-    public LevelGeneration levelGen;
+    public LevelGeneration1 levelGen;
+
+    //public float timeBetweenRoomSpawn;
+    //public float spawnRoomCooldown;
 
     private void Update()
     {
@@ -23,6 +26,8 @@ public class SpawnRooms : MonoBehaviour
             // if not, we want to spawn a random room
             int rand = Random.Range(0, levelGen.rooms.Length);
             Instantiate(levelGen.rooms[rand], transform.position, Quaternion.identity);
+            //GameObject newRoom = Instantiate(levelGen.rooms[rand], transform.position, Quaternion.identity);
+            //newRoom.GetComponent<BoxCollider2D>().enabled = false;
 
             // stop this from creating multiple rooms on itself
             Destroy(gameObject);

@@ -101,6 +101,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        //print("TURN ENEMY " + collision.tag);
         if (collision.tag == "Tilemap" && canChangeDirection)
         {
             // when enemy gets to edge, flip enemy around
@@ -108,6 +109,7 @@ public class EnemyMovement : MonoBehaviour
             transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
             //canChangeDirection = false;
             StartCoroutine(StartChangeDirectionCooldown());
+            //print("ENEMY TURNED");
         }
     }
 
