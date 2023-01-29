@@ -14,6 +14,9 @@ public class LevelGeneration1 : MonoBehaviour
     public List<GameObject> spawnedRooms;
 
     // pick which direction to go next
+    // 1 & 2 = right
+    // 3 & 4 = left
+    // 5 = down
     private int direction;
 
     // amount to move on x axis to spawn new room
@@ -152,7 +155,8 @@ public class LevelGeneration1 : MonoBehaviour
 
                 // set direction to random number between 3 and 4
                 // this is so that if it goes left, it can't go right and overwrite itself
-                direction = Random.Range(3, 5);
+                //direction = Random.Range(3, 5);
+                direction = Random.Range(3, 6);
             }
             else
             {

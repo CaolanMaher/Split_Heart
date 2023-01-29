@@ -3050,6 +3050,7 @@ GameObject:
   - component: {fileID: 764395997}
   - component: {fileID: 764395998}
   - component: {fileID: 764395999}
+  - component: {fileID: 764396000}
   m_Layer: 0
   m_Name: Level Generation
   m_TagString: Untagged
@@ -3113,7 +3114,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 764395996}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1164e35e874b0f748889841acdacbd57, type: 3}
   m_Name: 
@@ -3131,6 +3132,41 @@ MonoBehaviour:
   minX: -5
   maxX: 45
   minY: -15
+  generationIsStopped: 0
+  roomMask:
+    serializedVersion: 2
+    m_Bits: 256
+  downConter: 0
+  timeBetweenRoomSpawn: 0
+  spawnRoomCooldown: 0.5
+  player: {fileID: 2059906182}
+  playerSpawnPoint: {fileID: 1924858041}
+--- !u!114 &764396000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764395996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dad234eb939b3a842901b35e041a1930, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingPositions:
+  - {fileID: 140773500}
+  rooms:
+  - {fileID: 2511817107949443230, guid: 0c94feb7b50858949bfb03a1e07de6d2, type: 3}
+  - {fileID: 7958345893954635599, guid: 36688603fd3e1ef408cdcc068d3ad03e, type: 3}
+  - {fileID: 7236114967776074464, guid: a6ba1990af585694a82366dbaac61c10, type: 3}
+  - {fileID: 5625912901471898772, guid: a9dc019d076a53740a8728b77046d5ce, type: 3}
+  spawnedRooms: []
+  moveAmountX: 10
+  moveAmountY: 10
+  minX: -5
+  maxX: 45
+  minY: -15
+  maxY: 15
   generationIsStopped: 0
   roomMask:
     serializedVersion: 2
