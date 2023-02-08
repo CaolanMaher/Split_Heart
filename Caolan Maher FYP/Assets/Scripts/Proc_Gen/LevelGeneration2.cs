@@ -8,6 +8,8 @@ public class LevelGeneration2 : MonoBehaviour
     // array of where start of level can be
     public Transform[] startingPositions;
 
+    //public enum RoomOpeningType { LR = 0, LRB, LRT, LRBT, LB, LT, RB, RT, L, B, R, T }
+
     // array of rooms that can be placed
     public GameObject[] rooms; // index 0 -> LR, index 1 -> LRB, index 2 -> LRT, index 3 -> LRBT
 
@@ -23,7 +25,16 @@ public class LevelGeneration2 : MonoBehaviour
     // dictionary of room to branch from on the critical path and the current count of the branch size
     public Dictionary<int, int> branchRoomCount;
 
-    public enum RoomContext { START, END, UP_TO_RIGHT_CORNER, DOWN_TO_RIGHT_CORNER, RIGHT_TO_UP_CORNER, RIGHT_TO_DOWN_CORNER, DOWN_STRAIGHT, UP_STRAIGHT, RIGHT_STRAIGHT }
+    // dictionary of room to branch from on the critical path and the current count of times it has gone down
+    public Dictionary<int, int> branchRoomDownCount;
+
+    // dictionary of room to branch from on the critical path and the current count of times it has gone up
+    public Dictionary<int, int> branchRoomUpCount;
+
+    // dictionary of room to branch from on the critical path and the amount of attempts made to make a room
+    public Dictionary<int, int> branchRoomAttemptCount;
+
+    //public enum RoomContext { START, END, UP_TO_RIGHT_CORNER, DOWN_TO_RIGHT_CORNER, RIGHT_TO_UP_CORNER, RIGHT_TO_DOWN_CORNER, DOWN_STRAIGHT, UP_STRAIGHT, RIGHT_STRAIGHT }
 
     // dictionary for room and context of room e.g corner, straigh path etc
     //public Dictionary<GameObject, RoomContext> criticalPathDictionary;
@@ -33,6 +44,7 @@ public class LevelGeneration2 : MonoBehaviour
     // 3 = down
     // 4 = up
     private int direction;
+    private int branchDirection;
     //private int previousDirection;
 
     // amount to move on x axis to spawn new room
@@ -85,12 +97,22 @@ public class LevelGeneration2 : MonoBehaviour
 
         branchRoomCount = new Dictionary<int, int>();
 
+        branchRoomDownCount = new Dictionary<int, int>();
+
+        branchRoomUpCount = new Dictionary<int, int>();
+
+        branchRoomAttemptCount = new Dictionary<int, int>();
+
         //criticalPathDictionary = new Dictionary<GameObject, RoomContext>();
 
         // get a random starting point, set this objects position to it, and spawn our first room
         int randStartingPos = Random.Range(0, startingPositions.Length);
         transform.position = startingPositions[randStartingPos].position;
-        GameObject newRoom = Instantiate(rooms[0], transform.position, Quaternion.identity);
+
+        print("SPAWNING ROOM AT : " + transform.position);
+
+        // spawn a room with just a left opening first
+        GameObject newRoom = Instantiate(rooms[9], transform.position, Quaternion.identity);
 
         criticalPathRooms.Add(newRoom);
         //criticalPathDictionary[newRoom] = RoomContext.START;
@@ -124,15 +146,15 @@ public class LevelGeneration2 : MonoBehaviour
             //int numberOfBranches = Random.Range(5, criticalPathRooms.Count / 4);
             //CreateBranches(numberOfBranches);
 
-            print("CALLING MOVE BRANCH");
+            //print("CALLING MOVE BRANCH");
 
             MoveBranch();
             timeBetweenRoomSpawn = spawnRoomCooldown;
         }
-        else if(timeBetweenRoomSpawn <= 0 && generationIsStopped)
-        {
+        //else if(timeBetweenRoomSpawn <= 0 && generationIsStopped)
+        //{
             //SpawnPlayer();
-        }
+        //}
         else
         {
             if (!generationIsStopped)
@@ -150,16 +172,69 @@ public class LevelGeneration2 : MonoBehaviour
         if(direction == 1 || direction == 2)
         {
             //print(transform.position.x + " : " + maxX);
-            if(transform.position.x < maxX)
+            if(transform.position.x <= maxX)
             {
+
+                // Get the room we just created before this
+                Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
+
+                // check if the room found has a right opening
+                if (roomDetection.GetComponent<RoomType>().type != 0 
+                    && roomDetection.GetComponent<RoomType>().type != 1 
+                    && roomDetection.GetComponent<RoomType>().type != 2
+                    && roomDetection.GetComponent<RoomType>().type != 3
+                    && roomDetection.GetComponent<RoomType>().type != 6
+                    && roomDetection.GetComponent<RoomType>().type != 7
+                    && roomDetection.GetComponent<RoomType>().type != 11)
+                {
+                    // if not, get the current rooms type, destroy the room and create one with a right opening and whatever openings it currently has
+
+                    int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
+
+                    criticalPathRooms.Remove(roomDetection.gameObject.transform.parent.gameObject);
+                    //criticalPathDictionary.Remove(roomDetection.gameObject.transform.parent.gameObject);
+                    roomDetection.GetComponent<RoomType>().RoomDestruction();
+
+                    print("GOING RIGHT, LOOKING TO REPLACE ROOM : " + roomDetectionType);
+
+                    // check which room type should replace this room
+                    // it can be 9, 10, 12
+                    // if previous room was a left opening room
+                    if(roomDetectionType == 9)
+                    {
+                        print("REPLACING CURRENT ROOM WITH : " + 0 + " AT : " + transform.position);
+                        // need to spawn a room with left and right openings
+                        GameObject newRoom_local = Instantiate(rooms[0], transform.position, Quaternion.identity);
+                        criticalPathRooms.Add(newRoom_local);
+                    }
+                    // if it was a bottom opening room
+                    else if(roomDetectionType == 10)
+                    {
+                        print("REPLACING CURRENT ROOM WITH : " + 6 + " AT : " + transform.position);
+                        // need to spawn a room with bottom and right openings
+                        GameObject newRoom_local = Instantiate(rooms[6], transform.position, Quaternion.identity);
+                        criticalPathRooms.Add(newRoom_local);
+                    }
+                    // if it was a top opening room
+                    else if (roomDetectionType == 12)
+                    {
+                        print("REPLACING CURRENT ROOM WITH : " + 7 + " AT : " + transform.position);
+                        // need to spawn a room with top and right openings
+                        GameObject newRoom_local = Instantiate(rooms[7], transform.position, Quaternion.identity);
+                        criticalPathRooms.Add(newRoom_local);
+                    }
+                }
 
                 // we are within the maxX so we can move right
                 Vector2 newPos = new Vector2(transform.position.x + moveAmountX, transform.position.y);
                 transform.position = newPos;
 
-                // all rooms have openings on right, so we pick on at random
-                int rand = Random.Range(0, rooms.Length);
-                GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
+                // all rooms have openings on right, so we pick one at random
+                //int rand = Random.Range(0, rooms.Length);
+                //GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
+
+                // Spawn a room with a left opening
+                GameObject newRoom = Instantiate(rooms[9], transform.position, Quaternion.identity);
 
                 criticalPathRooms.Add(newRoom);
 
@@ -185,19 +260,37 @@ public class LevelGeneration2 : MonoBehaviour
 
                 // set direction to random number between 1 and 4
                 direction = Random.Range(1, 5);
+
+                if(transform.position.x == maxX)
+                {
+                    //generationIsStopped = true;
+                    criticalPathFinished = true;
+                    /*
+
+                    int numberOfBranches = Random.Range(5, criticalPathRooms.Count / 4);
+
+                    print("STARTING BRANCHING");
+
+                    CreateBranches(numberOfBranches);
+                    */
+                }
             }
+            /*
             else
             {
                 //generationIsStopped = true;
-                criticalPathFinished = true;
+                //criticalPathFinished = true;
 
-                int numberOfBranches = Random.Range(5, criticalPathRooms.Count / 4);
-                print("STARTING BRANCHING");
-                CreateBranches(2);
+                //int numberOfBranches = Random.Range(5, criticalPathRooms.Count / 4);
+
+                //print("STARTING BRANCHING");
+
+                //CreateBranches(numberOfBranches);
 
                 // spawn our player
                 //SpawnPlayer();
             }
+            */
         }
         else if(direction == 3)
         {
@@ -212,7 +305,12 @@ public class LevelGeneration2 : MonoBehaviour
                 Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
 
                 // check if the room found has a bottom opening
-                if (roomDetection.GetComponent<RoomType>().type != 1 && roomDetection.GetComponent<RoomType>().type != 3)
+                if (roomDetection.GetComponent<RoomType>().type != 1 
+                    && roomDetection.GetComponent<RoomType>().type != 3
+                    && roomDetection.GetComponent<RoomType>().type != 4
+                    && roomDetection.GetComponent<RoomType>().type != 6
+                    && roomDetection.GetComponent<RoomType>().type != 8
+                    && roomDetection.GetComponent<RoomType>().type != 10)
                 {
 
                     // has our level gen has moved down more than 2 times in a row
@@ -222,12 +320,16 @@ public class LevelGeneration2 : MonoBehaviour
                         // previously, if we went down twice or more, there's a chance a room with no bottom opening could spawn
                         // resulting in a dead end
 
+                        //int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
+
                         // we destroy the room that might have not had a bottom opening
                         criticalPathRooms.Remove(roomDetection.gameObject.transform.parent.gameObject);
                         //criticalPathDictionary.Remove(roomDetection.gameObject.transform.parent.gameObject);
                         roomDetection.GetComponent<RoomType>().RoomDestruction();
 
-                        GameObject newRoom_local = Instantiate(rooms[3], transform.position, Quaternion.identity);
+                        // since this is the second time going down, the only room type that can be spawned here is the top and bottom opening room
+                        GameObject newRoom_local = Instantiate(rooms[8], transform.position, Quaternion.identity);
+
                         //GameObject newRoom_local = Instantiate(rooms[3], transform.position, Quaternion.identity);
 
                         criticalPathRooms.Add(newRoom_local);
@@ -246,23 +348,51 @@ public class LevelGeneration2 : MonoBehaviour
                     }
                     else
                     {
+                        int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
+
+                        print("GOING DOWN, LOOKING TO REPLACE ROOM : " + roomDetectionType);
+
                         // if not, we destroy the last room and spwan a room with all 4 openings or with LRB
                         criticalPathRooms.Remove(roomDetection.gameObject.transform.parent.gameObject);
                         //criticalPathDictionary.Remove(roomDetection.gameObject.transform.parent.gameObject);
                         roomDetection.GetComponent<RoomType>().RoomDestruction();
 
+                        // check which room type should replace this room
+                        // it can be 9, 11, 12
+                        // if previous room was a left opening room
+                        if (roomDetectionType == 9)
+                        {
+                            // need to spawn a room with left and bottom openings
+                            GameObject newRoom_local = Instantiate(rooms[4], transform.position, Quaternion.identity);
+                            criticalPathRooms.Add(newRoom_local);
+                        }
+                        // if it was a bottom opening room
+                        else if (roomDetectionType == 11)
+                        {
+                            // need to spawn a room with bottom and right openings
+                            GameObject newRoom_local = Instantiate(rooms[6], transform.position, Quaternion.identity);
+                            criticalPathRooms.Add(newRoom_local);
+                        }
+                        // if it was a top opening room
+                        else if (roomDetectionType == 12)
+                        {
+                            // need to spawn a room with top and right openings
+                            GameObject newRoom_local = Instantiate(rooms[8], transform.position, Quaternion.identity);
+                            criticalPathRooms.Add(newRoom_local);
+                        }
+
                         // we want to create a room that has a bottom opening
                         // we want an index of 1 or 3
-                        int randomBottomRoom = Random.Range(1, 4);
+                        //int randomBottomRoom = Random.Range(1, 4);
                         // if we get 2
-                        if (randomBottomRoom == 2)
-                        {
-                            // make it into 1
-                            randomBottomRoom = 1;
-                        }
-                        GameObject newRoom_local = Instantiate(rooms[randomBottomRoom], transform.position, Quaternion.identity);
+                        //if (randomBottomRoom == 2)
+                        //{
+                        // make it into 1
+                        //randomBottomRoom = 1;
+                        //}
+                        //GameObject newRoom_local = Instantiate(rooms[randomBottomRoom], transform.position, Quaternion.identity);
 
-                        criticalPathRooms.Add(newRoom_local);
+                        //criticalPathRooms.Add(newRoom_local);
 
                         // check if we are making a corner or continuing down
                         /*
@@ -283,8 +413,11 @@ public class LevelGeneration2 : MonoBehaviour
                 transform.position = newPos;
 
                 // rooms with index 2 and 3 have top openings
-                int rand = Random.Range(2, 4);
-                GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
+                //int rand = Random.Range(2, 4);
+                //GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
+
+                // only spawn a room with a top opening
+                GameObject newRoom = Instantiate(rooms[12], transform.position, Quaternion.identity);
 
                 criticalPathRooms.Add(newRoom);
 
@@ -329,7 +462,12 @@ public class LevelGeneration2 : MonoBehaviour
                 Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
 
                 // check if the room found has a top opening
-                if (roomDetection.GetComponent<RoomType>().type != 2 && roomDetection.GetComponent<RoomType>().type != 3)
+                if (roomDetection.GetComponent<RoomType>().type != 2 
+                    && roomDetection.GetComponent<RoomType>().type != 3
+                    && roomDetection.GetComponent<RoomType>().type != 5
+                    && roomDetection.GetComponent<RoomType>().type != 7
+                    && roomDetection.GetComponent<RoomType>().type != 8
+                    && roomDetection.GetComponent<RoomType>().type != 12)
                 {
                     // has our level gen has moved up more than 2 times in a row
                     if (upCounter >= 2)
@@ -343,7 +481,10 @@ public class LevelGeneration2 : MonoBehaviour
                         //criticalPathDictionary.Remove(roomDetection.gameObject.transform.parent.gameObject);
                         roomDetection.GetComponent<RoomType>().RoomDestruction();
 
-                        GameObject newRoom_local = Instantiate(rooms[3], transform.position, Quaternion.identity);
+                        // since this is the second time going up, the only room type that can be spawned here is the top and bottom opening room
+                        GameObject newRoom_local = Instantiate(rooms[8], transform.position, Quaternion.identity);
+
+                        //GameObject newRoom_local = Instantiate(rooms[3], transform.position, Quaternion.identity);
                         criticalPathRooms.Add(newRoom_local);
 
                         // check if we are making a corner or continuing up
@@ -360,18 +501,46 @@ public class LevelGeneration2 : MonoBehaviour
                     }
                     else
                     {
+                        int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
+
+                        print("GOING UP, LOOKING TO REPLACE ROOM : " + roomDetectionType);
+
                         // if not, we destroy the last room and spwan a room with all 4 openings or with LRT
                         criticalPathRooms.Remove(roomDetection.gameObject.transform.parent.gameObject);
                         //criticalPathDictionary.Remove(roomDetection.gameObject.transform.parent.gameObject);
                         roomDetection.GetComponent<RoomType>().RoomDestruction();
 
+                        // check which room type should replace this room
+                        // it can be 9, 10, 11
+                        // if previous room was a left opening room
+                        if (roomDetectionType == 9)
+                        {
+                            // need to spawn a room with left and bottom openings
+                            GameObject newRoom_local = Instantiate(rooms[5], transform.position, Quaternion.identity);
+                            criticalPathRooms.Add(newRoom_local);
+                        }
+                        // if it was a bottom opening room
+                        else if (roomDetectionType == 10)
+                        {
+                            // need to spawn a room with bottom and right openings
+                            GameObject newRoom_local = Instantiate(rooms[8], transform.position, Quaternion.identity);
+                            criticalPathRooms.Add(newRoom_local);
+                        }
+                        // if it was a top opening room
+                        else if (roomDetectionType == 11)
+                        {
+                            // need to spawn a room with top and right openings
+                            GameObject newRoom_local = Instantiate(rooms[7], transform.position, Quaternion.identity);
+                            criticalPathRooms.Add(newRoom_local);
+                        }
+
                         // we want to create a room that has a bottom opening
                         // we want an index of 2 or 3
-                        int randomBottomRoom = Random.Range(2, 4);
+                        //int randomBottomRoom = Random.Range(2, 4);
 
-                        GameObject newRoom_local = Instantiate(rooms[randomBottomRoom], transform.position, Quaternion.identity);
+                        //GameObject newRoom_local = Instantiate(rooms[randomBottomRoom], transform.position, Quaternion.identity);
 
-                        criticalPathRooms.Add(newRoom_local);
+                        //criticalPathRooms.Add(newRoom_local);
 
                         // check if we are making a corner or continuing up
                         /*
@@ -392,14 +561,17 @@ public class LevelGeneration2 : MonoBehaviour
                 transform.position = newPos;
 
                 // rooms with index 1 and 3 have bottom openings
-                int rand = Random.Range(1, 4);
+                //int rand = Random.Range(1, 4);
 
-                if(rand == 2)
-                {
-                    rand = 1;
-                }
+                //if(rand == 2)
+                //{
+                //    rand = 1;
+                //}
 
-                GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
+                //GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
+
+                // only spawn a room with a bottom opening
+                GameObject newRoom = Instantiate(rooms[10], transform.position, Quaternion.identity);
 
                 criticalPathRooms.Add(newRoom);
 
@@ -423,6 +595,8 @@ public class LevelGeneration2 : MonoBehaviour
                 {
                     direction = 1;
                 }
+
+                print("JUST WENT UP, LOOKING TO GO " + direction);
             }
             // we can't, so let's go right
             else
@@ -507,7 +681,7 @@ public class LevelGeneration2 : MonoBehaviour
             int roomIndexToBranchFrom = Random.Range(1, criticalPathRooms.Count - 1);
             GameObject roomToBranchFrom = criticalPathRooms[roomIndexToBranchFrom];
 
-            print("ADDING : " + roomIndexToBranchFrom + " TO BRANCH");
+            //print("ADDING : " + roomIndexToBranchFrom + " TO BRANCH");
 
             if (!roomsToStartBranchFrom.Contains(roomToBranchFrom))
             {
@@ -515,333 +689,355 @@ public class LevelGeneration2 : MonoBehaviour
             }
             else
             {
-                print("TRIED ADDING DUPLICATE ROOMS");
+                //print("TRIED ADDING DUPLICATE ROOMS");
             }
         }
     }
-
-        /*
-        for(int i = 0; i < numberOfBranches; i++)
-        {
-
-            int roomLimitForBranch = 3;
-
-            for (int j = 0; j <= roomLimitForBranch; j++)
-            {
-                int currentRoomCount = 0;
-
-                int roomIndexToBranchFrom = Random.Range(1, criticalPathRooms.Count - 1);
-                GameObject roomToBranchFrom = criticalPathRooms[roomIndexToBranchFrom];
-
-                transform.position = roomToBranchFrom.transform.position;
-
-                int branchDirection = direction = Random.Range(1, 5);
-
-                print("BRANCHING FROM: " + roomIndexToBranchFrom + " AND GOING: " + branchDirection);
-
-                if (branchDirection == 1 || branchDirection == 2)
-                {
-                    // Get if there is already a room in this direction
-                    Vector3 positionToRight = new Vector3(transform.position.x + moveAmountX, transform.position.y, transform.position.z);
-                    Collider2D roomDetection = Physics2D.OverlapCircle(positionToRight, 1, roomMask);
-
-                    // is there a room to the right?
-                    if (roomDetection != null)
-                    {
-                        // no, so we can go this way
-
-                        currentRoomCount++;
-
-                        // are we at the limit of rooms for this branch?
-                        if (currentRoomCount < roomLimitForBranch)
-                        {
-                            Vector3 newPos = positionToRight;
-                            transform.position = newPos;
-
-                            int rand = Random.Range(1, 4);
-                            GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
-                        }
-                        else if (currentRoomCount == roomLimitForBranch)
-                        {
-                            // spawn dead end
-                        }
-                        else
-                        {
-                            // finished with this branch
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        // yes, so stop for now
-                        print("CANT GO THIS WAY");
-                        continue;
-                    }
-                }
-                else if (branchDirection == 3)
-                {
-                    // Get if there is already a room in this direction
-                    Vector3 positionToDown = new Vector3(transform.position.x, transform.position.y - moveAmountY, transform.position.z);
-                    Collider2D roomDetection = Physics2D.OverlapCircle(positionToDown, 1, roomMask);
-
-                    // is there a room below?
-                    if (roomDetection != null)
-                    {
-                        // no, so we can go this way
-
-                        currentRoomCount++;
-
-                        // are we at the limit of rooms for this branch?
-                        if (currentRoomCount < roomLimitForBranch)
-                        {
-                            Vector3 newPos = positionToDown;
-                            transform.position = newPos;
-
-                            int rand = Random.Range(1, 4);
-                            GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
-                        }
-                        else if (currentRoomCount == roomLimitForBranch)
-                        {
-                            // spawn dead end
-                        }
-                        else
-                        {
-                            // finished with this branch
-                            print("CANT GO THIS WAY");
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        // yes, so stop for now
-                        continue;
-                    }
-                }
-                else if (branchDirection == 4)
-                {
-                    // Get if there is already a room in this direction
-                    Vector3 positionToUp = new Vector3(transform.position.x, transform.position.y + moveAmountY, transform.position.z);
-                    Collider2D roomDetection = Physics2D.OverlapCircle(positionToUp, 1, roomMask);
-
-                    // is there a room above?
-                    if (roomDetection != null)
-                    {
-                        // no, so we can go this way
-
-                        currentRoomCount++;
-
-                        // are we at the limit of rooms for this branch?
-                        if (currentRoomCount < roomLimitForBranch)
-                        {
-                            Vector3 newPos = positionToUp;
-                            transform.position = newPos;
-
-                            int rand = Random.Range(1, 4);
-                            GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
-                        }
-                        else if (currentRoomCount == roomLimitForBranch)
-                        {
-                            // spawn dead end
-                        }
-                        else
-                        {
-                            // finished with this branch
-                            print("CANT GO THIS WAY");
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        // yes, so stop for now
-                        continue;
-                    }
-                }
-            }
-        }
-
-        // finished with branching
-        generationIsStopped = true;
-        SpawnPlayer();
-    }
-        */
 
     void MoveBranch()
     {
 
         int roomLimitForBranch = 5;
 
-        int branchRoomCounter;
+        int branchAttemptLimit = 5;
 
         for (int i = 0; i < roomsToStartBranchFrom.Count; i++)
         {
-            //int roomIndexToBranchFrom = Random.Range(1, criticalPathRooms.Count - 1);
             GameObject roomToBranchFrom;
             if (roomsToContinueBranchFrom.ContainsKey(i))
             {
                 roomToBranchFrom = roomsToContinueBranchFrom[i];
-                branchRoomCounter = branchRoomCount[i];
             }
             else
             {
+                print("SETTING UP " + i);
                 roomToBranchFrom = roomsToStartBranchFrom[i];
+                roomsToContinueBranchFrom[i] = roomToBranchFrom;
                 branchRoomCount[i] = 0;
-                branchRoomCounter = 0;
+                branchRoomDownCount[i] = 0;
+                branchRoomUpCount[i] = 0;
+                branchRoomAttemptCount[i] = 0;
+            }
+
+            if (branchRoomAttemptCount[i] >= branchAttemptLimit)
+            {
+                print("THIS BRANCH " + i + " HAS NO MORE ATTEMPTS");
+                branchRoomCount[i] = roomLimitForBranch;
+                continue;
             }
 
             transform.position = roomToBranchFrom.transform.position;
 
-            int branchDirection = direction = Random.Range(1, 5);
-            //int branchDirection = 1;
+            // 1 & 2 = right
+            // 3 & 4 = left
+            // 5 = down
+            // 6 = up
+            branchDirection = Random.Range(1, 7);
 
-            print("BRANCHING FROM: " + i + " AND GOING: " + branchDirection);
+            //print("BRANCHING FROM: " + i + " AND GOING: " + branchDirection);
 
             if (branchDirection == 1 || branchDirection == 2)
             {
                 // Get if there is already a room in this direction
-                Vector3 positionToRight = new Vector3(transform.position.x + moveAmountX, transform.position.y, transform.position.z);
-                print("CHECKING POSITION: " + positionToRight);
-                Collider2D roomDetection = Physics2D.OverlapCircle(positionToRight, 1, roomMask);
-                print("FOUND: " + roomDetection);
+                Vector2 positionToRight = new Vector2(transform.position.x + moveAmountX, transform.position.y);
+                //print("CHECKING POSITION: " + positionToRight);
+                Collider2D roomDetectionToRight = Physics2D.OverlapCircle(positionToRight, 1, roomMask);
+                //print("FOUND: " + roomDetection);
 
                 // is there a room to the right?
-                if (roomDetection == null)
+                if (roomDetectionToRight == null)
                 {
                     // no, so we can go this way
 
-                    branchRoomCounter++;
-
-                    branchRoomCount[i] += 1;
-
                     // are we at the limit of rooms for this branch?
-                    if (branchRoomCounter < roomLimitForBranch)
+                    if (branchRoomCount[i] < roomLimitForBranch)
                     {
-                        Vector3 newPos = positionToRight;
+                        //branchRoomCounter++;
+
+                        branchRoomCount[i] += 1;
+
+                        // reset up and down counters
+                        branchRoomDownCount[i] = 0;
+                        branchRoomUpCount[i] = 0;
+
+                        Vector2 newPos = positionToRight;
                         transform.position = newPos;
 
-                        print("CREATING ROOM AT : " + transform.position);
+                        //print("CREATING ROOM AT : " + transform.position);
 
                         int rand = Random.Range(1, 4);
                         GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
 
-                        //roomsToStartBranchFrom[i] = newRoom;
                         roomsToContinueBranchFrom[i] = newRoom;
-
-                        //roomsToContinueBranchFrom.Add(newRoom);
-
-                        print("CREATED ROOM BY GOING: " + branchDirection);
                     }
-                    else if (branchRoomCounter == roomLimitForBranch)
+                    else if (branchRoomCount[i] == roomLimitForBranch)
                     {
                         // spawn dead end
                     }
                     else
                     {
                         // finished with this branch
-                        print("REACHED LIMIT");
+                        //print("REACHED LIMIT");
                         continue;
                     }
                 }
                 else
                 {
                     // yes, so stop for now
-                    print("CANT GO THIS WAY");
+                    //print("CANT GO THIS WAY");
+                    //branchRoomCount[i] = roomLimitForBranch;
+                    //branchAttemptCounter++;
+                    branchRoomAttemptCount[i] += 1;
                     continue;
                 }
             }
-            else if (branchDirection == 3)
+            else if (branchDirection == 3 || branchDirection == 4)
             {
                 // Get if there is already a room in this direction
-                Vector3 positionToDown = new Vector3(transform.position.x, transform.position.y - moveAmountY, transform.position.z);
-                Collider2D roomDetection = Physics2D.OverlapCircle(positionToDown, 1, roomMask);
+                Vector2 positionToLeft = new Vector2(transform.position.x - moveAmountX, transform.position.y);
+                //print("CHECKING POSITION: " + positionToLeft);
+                Collider2D roomDetectionToLeft = Physics2D.OverlapCircle(positionToLeft, 1, roomMask);
+                //print("FOUND: " + roomDetection);
+
+                // is there a room to the left?
+                if (roomDetectionToLeft == null)
+                {
+                    // no, so we can go this way
+
+                    //branchRoomCounter++;
+
+                    //branchRoomCount[i] += 1;
+
+                    // are we at the limit of rooms for this branch?
+                    if (branchRoomCount[i] < roomLimitForBranch)
+                    {
+
+                        branchRoomCount[i] += 1;
+
+                        // reset up and down counters
+                        branchRoomDownCount[i] = 0;
+                        branchRoomUpCount[i] = 0;
+
+                        Vector2 newPos = positionToLeft;
+                        transform.position = newPos;
+
+                        //print("CREATING ROOM AT : " + transform.position);
+
+                        int rand = Random.Range(1, 4);
+                        GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
+
+                        roomsToContinueBranchFrom[i] = newRoom;
+                    }
+                    else if (branchRoomCount[i] == roomLimitForBranch)
+                    {
+                        // spawn dead end
+                    }
+                    else
+                    {
+                        // finished with this branch
+                        //print("REACHED LIMIT");
+                        continue;
+                    }
+                }
+                else
+                {
+                    // yes, so stop for now
+                    //print("CANT GO THIS WAY");
+                    //branchAttemptCounter++;
+                    branchRoomAttemptCount[i] += 1;
+                    continue;
+                }
+            }
+            else if (branchDirection == 5)
+            {
+
+                if (branchRoomDownCount[i] == 1)
+                {
+                    // don't want branch to go down multiple times
+                    //print("REACHED DOWN LIMIT");
+                    branchRoomAttemptCount[i] += 1;
+                    continue;
+                }
+
+                // Get if there is already a room in this direction
+                Vector2 positionToDown = new Vector2(transform.position.x, transform.position.y - moveAmountY);
+                Collider2D roomDetectionToDown = Physics2D.OverlapCircle(positionToDown, 1, roomMask);
 
                 // is there a room below?
-                if (roomDetection == null)
+                if (roomDetectionToDown == null)
                 {
                     // no, so we can go this way
 
-                    branchRoomCounter++;
-
-                    branchRoomCount[i] += 1;
-
                     // are we at the limit of rooms for this branch?
-                    if (branchRoomCounter < roomLimitForBranch)
+                    if (branchRoomCount[i] < roomLimitForBranch)
                     {
-                        Vector3 newPos = positionToDown;
+
+                        branchRoomCount[i] += 1;
+
+                        branchRoomDownCount[i] += 1;
+
+                        // Get the room we just created before this
+                        Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
+
+                        // Check does this room have a bottom opening
+                        if(roomDetection.GetComponent<RoomType>().type != 1 && roomDetection.GetComponent<RoomType>().type != 3)
+                        {
+                            roomDetection.GetComponent<RoomType>().RoomDestruction();
+
+                            // we want to create a room that has a bottom opening
+                            // we want an index of 1 or 3
+                            int randomBottomRoom = Random.Range(1, 4);
+                            // if we get 2
+                            if (randomBottomRoom == 2)
+                            {
+                                // make it into 1
+                                randomBottomRoom = 1;
+                            }
+                            //GameObject newRoom_local = Instantiate(rooms[randomBottomRoom], transform.position, Quaternion.identity);
+                            Instantiate(rooms[3], transform.position, Quaternion.identity);
+                        }
+
+                        Vector2 newPos = positionToDown;
                         transform.position = newPos;
 
-                        int rand = Random.Range(1, 4);
+                        // rooms with index 2 and 3 have top openings
+                        int rand = Random.Range(2, 4);
                         GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
 
-                        //roomsToStartBranchFrom[i] = newRoom;
                         roomsToContinueBranchFrom[i] = newRoom;
-
-                        print("CREATED ROOM BY GOING: " + branchDirection);
                     }
-                    else if (branchRoomCounter == roomLimitForBranch)
+                    else if (branchRoomCount[i] == roomLimitForBranch)
                     {
                         // spawn dead end
                     }
                     else
                     {
                         // finished with this branch
-                        print("REACHED LIMIT");
+                        //print("REACHED LIMIT");
                         continue;
                     }
                 }
                 else
                 {
                     // yes, so stop for now
-                    print("CANT GO THIS WAY");
+                    //print("CANT GO THIS WAY");
+                    //branchAttemptCounter++;
+                    branchRoomAttemptCount[i] += 1;
                     continue;
                 }
             }
-            else if (branchDirection == 4)
+            else if (branchDirection == 6)
             {
+
+                if (branchRoomUpCount[i] == 1)
+                {
+                    // don't want branch to go up multiple times
+                    //print("REACHED UP LIMIT");
+                    branchRoomAttemptCount[i] += 1;
+                    continue;
+                }
+
                 // Get if there is already a room in this direction
-                Vector3 positionToUp = new Vector3(transform.position.x, transform.position.y + moveAmountY, transform.position.z);
-                Collider2D roomDetection = Physics2D.OverlapCircle(positionToUp, 1, roomMask);
+                Vector2 positionToUp = new Vector2(transform.position.x, transform.position.y + moveAmountY);
+                Collider2D roomDetectionToUp = Physics2D.OverlapCircle(positionToUp, 1, roomMask);
 
                 // is there a room above?
-                if (roomDetection == null)
+                if (roomDetectionToUp == null)
                 {
                     // no, so we can go this way
 
-                    branchRoomCounter++;
-
-                    branchRoomCount[i] += 1;
-
                     // are we at the limit of rooms for this branch?
-                    if (branchRoomCounter < roomLimitForBranch)
+                    if (branchRoomCount[i] < roomLimitForBranch)
                     {
-                        Vector3 newPos = positionToUp;
+
+                        branchRoomCount[i] += 1;
+
+                        branchRoomUpCount[i] += 1;
+
+                        // Get the room we just created before this
+                        Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
+
+                        // check if the room found has a top opening
+                        if (roomDetection.GetComponent<RoomType>().type != 2 && roomDetection.GetComponent<RoomType>().type != 3)
+                        {
+                            roomDetection.GetComponent<RoomType>().RoomDestruction();
+
+                            // we want to create a room that has a bottom opening
+                            // we want an index of 2 or 3
+                            int randomBottomRoom_local = Random.Range(2, 4);
+
+                            //GameObject newRoom_local = Instantiate(rooms[randomBottomRoom], transform.position, Quaternion.identity);
+                            Instantiate(rooms[3], transform.position, Quaternion.identity);
+                        }
+
+                        Vector2 newPos = positionToUp;
                         transform.position = newPos;
 
+                        // rooms with index 1 and 3 have bottom openings
                         int rand = Random.Range(1, 4);
+
+                        if(rand == 2)
+                        {
+                            rand = 1;
+                        }
+
                         GameObject newRoom = Instantiate(rooms[rand], transform.position, Quaternion.identity);
 
-                        //roomsToStartBranchFrom[i] = newRoom;
                         roomsToContinueBranchFrom[i] = newRoom;
-
-                        print("CREATED ROOM BY GOING: " + branchDirection);
                     }
-                    else if (branchRoomCounter == roomLimitForBranch)
+                    else if (branchRoomCount[i] == roomLimitForBranch)
                     {
                         // spawn dead end
                     }
                     else
                     {
                         // finished with this branch
-                        print("REACHED LIMIT");
+                        //print("REACHED LIMIT");
                         continue;
                     }
                 }
                 else
                 {
                     // yes, so stop for now
-                    print("CANT GO THIS WAY");
+                    //print("CANT GO THIS WAY");
+                    //branchAttemptCounter++;
+                    branchRoomAttemptCount[i] += 1;
                     continue;
                 }
             }
+        }
+
+        //print("CHECKING ATTEMPTS");
+        
+        foreach(KeyValuePair<int, int> pair in branchRoomAttemptCount)
+        {
+
+            print("CHECKING BRANCH ATTEMPTS " + pair.Key + " " + pair.Value);
+
+            //if(pair.Value >= branchAttemptLimit)
+            //{
+            //    print("BRANCH: " + pair.Key + " REACHED ATTEMPT LIMIT");
+            //    branchRoomCount[pair.Key] = roomLimitForBranch;
+            //}
+        }
+
+        bool allLimitsMet = true;
+
+        foreach(KeyValuePair<int, int> pair in branchRoomCount)
+        {
+
+            print("CHECKING BRANCH ROOMS " + pair.Key + " " + pair.Value);
+
+            if (!(pair.Value >= roomLimitForBranch))
+            {
+                allLimitsMet = false;
+            }
+        }
+
+        if(allLimitsMet)
+        {
+            branchingFinished = true;
+            SpawnPlayer();
         }
     }
 

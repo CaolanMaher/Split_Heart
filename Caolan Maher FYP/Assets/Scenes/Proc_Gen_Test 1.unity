@@ -272,43 +272,7 @@ CompositeCollider2D:
   m_GeometryType: 0
   m_GenerationType: 0
   m_EdgeRadius: 0
-  m_ColliderPaths:
-  - m_Collider: {fileID: 113063946}
-    m_ColliderPaths:
-    - - X: 500000041
-        Y: 200000100
-      - X: -200000041
-        Y: 200000100
-      - X: -200000100
-        Y: 200000041
-      - X: -200000100
-        Y: 189999959
-      - X: -200000041
-        Y: 189999900
-      - X: 489999900
-        Y: 189999900
-      - X: 489999900
-        Y: -189999900
-      - X: -189999900
-        Y: -189999900
-      - X: -189999900
-        Y: 100000041
-      - X: -189999959
-        Y: 100000100
-      - X: -200000041
-        Y: 100000100
-      - X: -200000100
-        Y: 100000041
-      - X: -200000100
-        Y: -200000041
-      - X: -200000041
-        Y: -200000100
-      - X: 500000041
-        Y: -200000100
-      - X: 500000100
-        Y: -200000041
-      - X: 500000100
-        Y: 200000041
+  m_ColliderPaths: []
   m_CompositePaths:
     m_Paths:
     - - {x: 49.999973, y: -20.00001}
@@ -2770,7 +2734,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!156049354 &322752041
 Grid:
   m_ObjectHideFlags: 0
@@ -3160,7 +3124,17 @@ MonoBehaviour:
   - {fileID: 7958345893954635599, guid: 36688603fd3e1ef408cdcc068d3ad03e, type: 3}
   - {fileID: 7236114967776074464, guid: a6ba1990af585694a82366dbaac61c10, type: 3}
   - {fileID: 5625912901471898772, guid: a9dc019d076a53740a8728b77046d5ce, type: 3}
-  spawnedRooms: []
+  - {fileID: 2511817107949443230, guid: 266175d111621d3498b4b05ba141b4a8, type: 3}
+  - {fileID: 2511817107949443230, guid: 8ea26bdf9bc8ff64b9d51196a4dd4b54, type: 3}
+  - {fileID: 2511817107949443230, guid: d65b19668a235a241bf648f0213a2613, type: 3}
+  - {fileID: 2511817107949443230, guid: 219040d2f54b99a4db0d7c8fb6c5a23a, type: 3}
+  - {fileID: 2511817107949443230, guid: 0bc7586a89ccf1d48b283e92169a95f3, type: 3}
+  - {fileID: 2511817107949443230, guid: a5990a0bce6425f4caba8fa100244a58, type: 3}
+  - {fileID: 2511817107949443230, guid: 45a502050871c064596597fee8563aa6, type: 3}
+  - {fileID: 2511817107949443230, guid: 228b91fb673f1134d9ac71aca4da8fa5, type: 3}
+  - {fileID: 2511817107949443230, guid: 418c4d3217e4a4841a074e7985b008df, type: 3}
+  criticalPathRooms: []
+  roomsToStartBranchFrom: []
   moveAmountX: 10
   moveAmountY: 10
   minX: -5
@@ -3168,12 +3142,16 @@ MonoBehaviour:
   minY: -15
   maxY: 15
   generationIsStopped: 0
+  criticalPathFinished: 0
+  branchingFinished: 0
   roomMask:
     serializedVersion: 2
     m_Bits: 256
-  downConter: 0
+  downCounter: 0
+  upCounter: 0
+  rightCounter: 0
   timeBetweenRoomSpawn: 0
-  spawnRoomCooldown: 0.5
+  spawnRoomCooldown: 0
   player: {fileID: 2059906182}
   playerSpawnPoint: {fileID: 1924858041}
 --- !u!1 &785935594
