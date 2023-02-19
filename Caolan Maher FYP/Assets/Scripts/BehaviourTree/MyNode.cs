@@ -12,32 +12,32 @@ namespace BehaviourTree
         FAILURE
     }
 
-    public class Node
+    public class MyNode
     {
         // protected allows inherited objects (children) to access and modify
         protected NodeState state;
 
-        public Node parent;
-        protected List<Node> children = new List<Node>();
+        public MyNode parent;
+        protected List<MyNode> children = new List<MyNode>();
 
         // string is used to mark the name of the data
         // using object as the value allows for any type of object to be stored
         private Dictionary<string, object> dataContext = new Dictionary<string, object>();
 
-        public Node()
+        public MyNode()
         {
             parent = null;
         }
 
-        public Node(List<Node> children)
+        public MyNode(List<MyNode> children)
         {
-            foreach(Node child in children)
+            foreach(MyNode child in children)
             {
                 Attach(child);
             }
         }
 
-        private void Attach(Node node)
+        private void Attach(MyNode node)
         {
             node.parent = this;
             children.Add(node);
@@ -51,7 +51,7 @@ namespace BehaviourTree
             dataContext[key] = value;
         }
 
-        public object Getdata(string key)
+        public object GetData(string key)
         {
             object value = null;
             if (dataContext.TryGetValue(key, out value))
@@ -62,10 +62,10 @@ namespace BehaviourTree
             // continue working up the branch until we have found the value
             // or until we get to the root of the tree
 
-            Node node = parent;
+            MyNode node = parent;
             while(node != null)
             {
-                value = node.Getdata(key);
+                value = node.GetData(key);
                 if(value != null)
                 {
                     return value;
@@ -75,7 +75,7 @@ namespace BehaviourTree
             return null;
         }
 
-        public bool Cleardata(string key)
+        public bool ClearData(string key)
         {
             if (dataContext.ContainsKey(key))
             {
@@ -86,10 +86,10 @@ namespace BehaviourTree
             // continue working up the branch until we have found the key
             // or until we get to the root of the tree
 
-            Node node = parent;
+            MyNode node = parent;
             while (node != null)
             {
-                bool cleared = node.Cleardata(key);
+                bool cleared = node.ClearData(key);
                 if (cleared)
                 {
                     return true;

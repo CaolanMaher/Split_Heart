@@ -268,7 +268,7 @@ public class LevelGeneration2 : MonoBehaviour
                     //generationIsStopped = true;
                     criticalPathFinished = true;
 
-                    int numberOfBranches = Random.Range(5, criticalPathRooms.Count / 4);
+                    int numberOfBranches = Random.Range(10, criticalPathRooms.Count / 3);
 
                     //int numberOfBranches = 2;
 

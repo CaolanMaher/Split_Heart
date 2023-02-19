@@ -8,11 +8,11 @@ namespace BehaviourTree
     // Sequence acts as an AND logic gate
     // it only succeeds if all child nodes succeed
 
-    public class Sequence : Node
+    public class Sequence : MyNode
     {
 
         public Sequence() : base() { }
-        public Sequence(List<Node> children) : base(children) { }
+        public Sequence(List<MyNode> children) : base(children) { }
 
         public override NodeState Evaluate()
         {
@@ -22,7 +22,7 @@ namespace BehaviourTree
 
             bool anyChildIsRunning = false;
 
-            foreach(Node child in children)
+            foreach(MyNode child in children)
             {
                 switch(child.Evaluate())
                 {
