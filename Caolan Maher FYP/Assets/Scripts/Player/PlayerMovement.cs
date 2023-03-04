@@ -31,6 +31,42 @@ public class PlayerMovement : MonoBehaviour
 
     private float movementSpeed = 7.0f;
 
+    private bool isFacingRight;
+
+    // Wall Detection
+    public Transform wallCheck;
+    float wallCheckDistance = 0.5f;
+    private bool isTouchingWall;
+
+    [SerializeField] private LayerMask groundLayer;
+
+    // Ledge Detection
+
+    public Transform ledgeCheck;
+    private bool isTouchingLedge;
+    private bool canClimbLedge = false;
+    private bool ledgeDetected;
+
+    private Vector2 ledgePositionBottom;
+    private Vector2 ledgePosition1;
+    private Vector2 ledgePosition2;
+
+    public Vector2 ledgeClimbOffset1;
+    public Vector2 ledgeClimbOffset2;
+
+    /*
+    public bool ledgeDetected;
+
+    [SerializeField] private Vector2 offset1;
+    [SerializeField] private Vector2 offset2;
+
+    private Vector2 climbBegunPosition;
+    private Vector2 climbOverPosition;
+
+    private bool canGrabLedge = true;
+    private bool canClimb;
+    */
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,6 +85,14 @@ public class PlayerMovement : MonoBehaviour
 
         Movement();
 
+        CheckSurroundings();
+
+        CheckLedgeClimb();
+
+        //AnimatorControlleVariables();
+
+        //CheckForLedge();
+
         //float attack = Input.GetAxisRaw("Fire1");
 
         if (Time.time >= nextAttackTime)
@@ -60,6 +104,95 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+
+    void CheckSurroundings()
+    {
+        isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, wallCheckDistance, groundLayer);
+        isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, wallCheckDistance, groundLayer);
+
+        if(isTouchingWall && !isTouchingLedge && !ledgeDetected)
+        {
+            ledgeDetected = true;
+            ledgePositionBottom = wallCheck.position;
+        }
+    }
+
+    // This method is called at the end of the climbing animation
+    public void FinishLedgeClimb()
+    {
+        canClimbLedge = false;
+        transform.position = ledgePosition2;
+
+        ledgeDetected = false;
+
+        playerAnimator.SetBool("canClimb", canClimbLedge);
+    }
+
+    void CheckLedgeClimb()
+    {
+        if(ledgeDetected && !canClimbLedge)
+        {
+            canClimbLedge = true;
+
+            if(isFacingRight)
+            {
+                ledgePosition1 = new Vector2(Mathf.Floor(ledgePositionBottom.x + wallCheckDistance) - ledgeClimbOffset1.x, Mathf.Floor(ledgePositionBottom.y) + ledgeClimbOffset1.y);
+                ledgePosition2 = new Vector2(Mathf.Floor(ledgePositionBottom.x + wallCheckDistance) + ledgeClimbOffset2.x, Mathf.Floor(ledgePositionBottom.y) + ledgeClimbOffset2.y);
+            }
+            else
+            {
+                ledgePosition1 = new Vector2(Mathf.Ceil(ledgePositionBottom.x - wallCheckDistance) + ledgeClimbOffset1.x, Mathf.Floor(ledgePositionBottom.y) + ledgeClimbOffset1.y);
+                ledgePosition2 = new Vector2(Mathf.Ceil(ledgePositionBottom.x - wallCheckDistance) - ledgeClimbOffset2.x, Mathf.Floor(ledgePositionBottom.y) + ledgeClimbOffset2.y);
+            }
+
+            playerAnimator.SetBool("canClimb", canClimbLedge);
+        }
+
+        if(canClimbLedge)
+        {
+            transform.position = ledgePosition1;
+        }
+    }
+
+    /*
+    void AnimatorControlleVariables()
+    {
+        playerAnimator.SetBool("canClimb", canClimb);
+    }
+
+    private void CheckForLedge()
+    {
+        if(ledgeDetected && canGrabLedge)
+        {
+            canGrabLedge = false;
+
+            Vector2 ledgePosition = GetComponentInChildren<LedgeDetection>().transform.position;
+
+            climbBegunPosition = ledgePosition + offset1;
+            climbOverPosition = ledgePosition + offset2;
+
+            canClimb = true;
+        }
+
+        if(canClimb)
+        {
+            transform.position = climbBegunPosition;
+        }
+    }
+
+    // This method is called by a trigger at the end of the climb animation
+    void LedgeClimbOver()
+    {
+        canClimb = false;
+        transform.position = climbOverPosition;
+        Invoke("AllowLedgeGrab", 0.1f);
+    }
+
+    void AllowLedgeGrab()
+    {
+        canGrabLedge = true;
+    }
+    */
 
     /*
     void FixedUpdate()
@@ -84,6 +217,8 @@ public class PlayerMovement : MonoBehaviour
             //{
                 playerAnimator.SetBool("isRunning", true);
             //}
+
+            isFacingRight = false;
         }
         else if (dirX > 0)
         {
@@ -97,6 +232,8 @@ public class PlayerMovement : MonoBehaviour
             //{
                 playerAnimator.SetBool("isRunning", true);
             //}
+
+            isFacingRight = true;
         }
         else
         {
