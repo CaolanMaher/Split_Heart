@@ -1,25 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
 
     // for prototype only
-    public GameObject mainCamera;
+    //public GameObject mainCamera;
 
-    private bool isAlive = true;
+    // General References
 
     private Rigidbody2D playerRigidbody;
     private Animator playerAnimator;
 
-    public Transform attackPoint;
-    private float attackRange = 0.75f;
-    public LayerMask enemyLayers;
-    public int attackDamage = 50;
-
-    private float attackRate = 2f;
-    private float nextAttackTime = 0f;
+    // Health / Combat
 
     private int maxHealth = 100;
     [SerializeField] private int currentHealth;
@@ -29,9 +25,41 @@ public class PlayerMovement : MonoBehaviour
 
     private int flashCooldown = 1;
 
-    private float movementSpeed = 7.0f;
+    // Attacking
+
+    public Transform attackPoint;
+    private float attackRange = 0.75f;
+    public LayerMask enemyLayers;
+    public int attackDamage = 50;
+
+    private float attackRate = 2f;
+    private float nextAttackTime = 0f;
+
+    // Movement
+
+    private float moveHorizontal;
+
+    private float movementSpeed = 350;
+    private float jumpForce = 15f;
 
     private bool isFacingRight;
+
+    private bool isAlive = true;
+
+    private bool justJumped;
+
+    private bool canTurn = true;
+
+    private bool canMove = true;
+
+    // Ground Detection
+
+    public Transform groundCheck_1;
+    public Transform groundCheck_2;
+
+    [SerializeField] private bool isGrounded;
+
+    private float groundCheckDistance = 0.2f;
 
     // Wall Detection
     public Transform wallCheck;
@@ -46,6 +74,9 @@ public class PlayerMovement : MonoBehaviour
     private bool isTouchingLedge;
     private bool canClimbLedge = false;
     private bool ledgeDetected;
+    private bool isGroundBeneath;
+
+    private float detectGroundBeneathDistance = 1.5f;
 
     private Vector2 ledgePositionBottom;
     private Vector2 ledgePosition1;
@@ -53,19 +84,6 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector2 ledgeClimbOffset1;
     public Vector2 ledgeClimbOffset2;
-
-    /*
-    public bool ledgeDetected;
-
-    [SerializeField] private Vector2 offset1;
-    [SerializeField] private Vector2 offset2;
-
-    private Vector2 climbBegunPosition;
-    private Vector2 climbOverPosition;
-
-    private bool canGrabLedge = true;
-    private bool canClimb;
-    */
 
     // Start is called before the first frame update
     void Start()
@@ -81,9 +99,9 @@ public class PlayerMovement : MonoBehaviour
     {
 
         // Delete Later
-        mainCamera.transform.position = new Vector3(transform.position.x, transform.position.y, -10f);
+        //mainCamera.transform.position = new Vector3(transform.position.x, transform.position.y, -10f);
 
-        Movement();
+        MovementCalculations();
 
         CheckSurroundings();
 
@@ -105,15 +123,28 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void FixedUpdate()
+    {
+        MovePlayer();
+    }
+
     void CheckSurroundings()
     {
+        isGrounded = Physics2D.Raycast(groundCheck_1.position, -transform.up, groundCheckDistance, groundLayer) 
+            || Physics2D.Raycast(groundCheck_2.position, -transform.up, groundCheckDistance, groundLayer);
+
         isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, wallCheckDistance, groundLayer);
         isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, wallCheckDistance, groundLayer);
 
-        if(isTouchingWall && !isTouchingLedge && !ledgeDetected)
+        isGroundBeneath = Physics2D.Raycast(wallCheck.position, -transform.up, detectGroundBeneathDistance, groundLayer);
+
+        if (isTouchingWall && !isTouchingLedge && !ledgeDetected && !isGrounded && !isGroundBeneath)
         {
             ledgeDetected = true;
             ledgePositionBottom = wallCheck.position;
+
+            canTurn = false;
+            canMove = false;
         }
     }
 
@@ -124,6 +155,9 @@ public class PlayerMovement : MonoBehaviour
         transform.position = ledgePosition2;
 
         ledgeDetected = false;
+
+        canTurn = true;
+        canMove = true;
 
         playerAnimator.SetBool("canClimb", canClimbLedge);
     }
@@ -154,84 +188,31 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    /*
-    void AnimatorControlleVariables()
-    {
-        playerAnimator.SetBool("canClimb", canClimb);
-    }
-
-    private void CheckForLedge()
-    {
-        if(ledgeDetected && canGrabLedge)
-        {
-            canGrabLedge = false;
-
-            Vector2 ledgePosition = GetComponentInChildren<LedgeDetection>().transform.position;
-
-            climbBegunPosition = ledgePosition + offset1;
-            climbOverPosition = ledgePosition + offset2;
-
-            canClimb = true;
-        }
-
-        if(canClimb)
-        {
-            transform.position = climbBegunPosition;
-        }
-    }
-
-    // This method is called by a trigger at the end of the climb animation
-    void LedgeClimbOver()
-    {
-        canClimb = false;
-        transform.position = climbOverPosition;
-        Invoke("AllowLedgeGrab", 0.1f);
-    }
-
-    void AllowLedgeGrab()
-    {
-        canGrabLedge = true;
-    }
-    */
-
-    /*
-    void FixedUpdate()
-    {
-        
-    }
-    */
-
-    void Movement()
+    void MovementCalculations()
     {
         float dirX = Input.GetAxis("Horizontal");
 
-        if (dirX < 0)
+        moveHorizontal = Input.GetAxisRaw("Horizontal");
+
+        if (dirX < 0 && canTurn)
         {
             transform.eulerAngles = new Vector3(
                 transform.eulerAngles.x,
                 180,
                 transform.eulerAngles.z
             );
-
-            //if (playerRigidbody.velocity.x < 0)
-            //{
-                playerAnimator.SetBool("isRunning", true);
-            //}
+            playerAnimator.SetBool("isRunning", true);
 
             isFacingRight = false;
         }
-        else if (dirX > 0)
+        else if (dirX > 0 && canTurn)
         {
             transform.eulerAngles = new Vector3(
                 transform.eulerAngles.x,
                 0,
                 transform.eulerAngles.z
             );
-
-            //if (playerRigidbody.velocity.x > 0)
-            //{
-                playerAnimator.SetBool("isRunning", true);
-            //}
+            playerAnimator.SetBool("isRunning", true);
 
             isFacingRight = true;
         }
@@ -246,11 +227,23 @@ public class PlayerMovement : MonoBehaviour
             playerAnimator.SetBool("isRunning", false);
         }
 
-        playerRigidbody.velocity = new Vector2(dirX * movementSpeed, playerRigidbody.velocity.y);
-
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && !justJumped && isGrounded)
         {
-            playerRigidbody.velocity = new Vector2(playerRigidbody.velocity.x, 20f);
+            justJumped = true;
+        }
+    }
+
+    void MovePlayer()
+    {
+        if (canMove)
+        {
+            playerRigidbody.velocity = new Vector2(moveHorizontal * movementSpeed * Time.deltaTime, playerRigidbody.velocity.y);
+        }
+
+        if(justJumped)
+        {
+            justJumped = false;
+            playerRigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
     }
 
