@@ -16,11 +16,18 @@ public class BanditBT : MyTree
 
     public static float sightRange = 6f;
 
+    public static float attackRange = 1f;
+
     protected override MyNode SetupTree()
     {
         //MyNode root = new BanditTaskPatrol(transform, enemyRigidBody, wallDetector, floorDetector, wallLayerMask, healthBarObject);
         MyNode root = new Selector(new List<MyNode>
         {
+            new Sequence(new List<MyNode>
+            {
+                new CheckPlayerInAttackRange(transform),
+                new BanditTaskAttack(transform)
+            }),
             new Sequence(new List<MyNode>
             {
                 new CheckPlayerInSightRange(transform),
