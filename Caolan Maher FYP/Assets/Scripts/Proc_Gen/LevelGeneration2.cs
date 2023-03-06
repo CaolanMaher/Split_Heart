@@ -272,7 +272,7 @@ public class LevelGeneration2 : MonoBehaviour
 
                     //int numberOfBranches = 2;
 
-                    print("STARTING BRANCHING");
+                    //print("STARTING BRANCHING");
 
                     CreateBranches(numberOfBranches);
                     
@@ -721,7 +721,7 @@ public class LevelGeneration2 : MonoBehaviour
             }
             else
             {
-                print("SETTING UP " + currentBranchToMoveIndex);
+                //print("SETTING UP " + currentBranchToMoveIndex);
                 roomToBranchFrom = roomsToStartBranchFrom[currentBranchToMoveIndex];
                 roomsToContinueBranchFrom[currentBranchToMoveIndex] = roomToBranchFrom;
                 branchRoomCount[currentBranchToMoveIndex] = 0;
@@ -736,7 +736,7 @@ public class LevelGeneration2 : MonoBehaviour
             {
                 if (branchRoomAttemptCount[i] >= branchAttemptLimit)
                 {
-                    print("THIS BRANCH " + i + " HAS NO MORE ATTEMPTS");
+                    //print("THIS BRANCH " + i + " HAS NO MORE ATTEMPTS");
                     branchRoomCount[i] = roomLimitForBranch;
 
                     //currentBranchToMoveIndex++;
@@ -750,7 +750,7 @@ public class LevelGeneration2 : MonoBehaviour
 
         foreach (KeyValuePair<int, int> pair in branchRoomCount)
         {
-            print("CHECKING " + pair.Key + " ROOM LIMIT " + pair.Value);
+            //print("CHECKING " + pair.Key + " ROOM LIMIT " + pair.Value);
             if (!(pair.Value >= roomLimitForBranch))
             {
                 allLimitsMet = false;
@@ -760,7 +760,7 @@ public class LevelGeneration2 : MonoBehaviour
         if (allLimitsMet)
         {
             branchingFinished = true;
-            print("CALLING SPAWN PLAYER");
+            //print("CALLING SPAWN PLAYER");
             SpawnPlayer();
             return;
         }
@@ -812,7 +812,7 @@ public class LevelGeneration2 : MonoBehaviour
                         return;
                     }
 
-                    print("GOING RIGHT AND REPLACING ROOM " + roomDetectionType);
+                    //print("GOING RIGHT AND REPLACING ROOM " + roomDetectionType);
 
                     roomDetection.GetComponent<RoomType>().RoomDestruction();
 
@@ -895,7 +895,7 @@ public class LevelGeneration2 : MonoBehaviour
                 //print("CANT GO THIS WAY");
                 //branchRoomCount[i] = roomLimitForBranch;
                 //branchAttemptCounter++;
-                print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
+                //print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
                 branchRoomAttemptCount[currentBranchToMoveIndex] += 1;
                 return;
                 //continue;
@@ -941,7 +941,7 @@ public class LevelGeneration2 : MonoBehaviour
                         return;
                     }
 
-                    print("GOING LEFT AND REPLACING ROOM " + roomDetectionType);
+                    //print("GOING LEFT AND REPLACING ROOM " + roomDetectionType);
 
                     roomDetection.GetComponent<RoomType>().RoomDestruction();
 
@@ -1023,7 +1023,7 @@ public class LevelGeneration2 : MonoBehaviour
                 // yes, so stop for now
                 //print("CANT GO THIS WAY");
                 //branchAttemptCounter++;
-                print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
+                //print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
                 branchRoomAttemptCount[currentBranchToMoveIndex] += 1;
                 //continue;
                 return;
@@ -1036,7 +1036,7 @@ public class LevelGeneration2 : MonoBehaviour
             {
                 // don't want branch to go down multiple times
                 //print("REACHED DOWN LIMIT");
-                print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
+                //print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
                 branchRoomAttemptCount[currentBranchToMoveIndex] += 1;
                 //continue;
                 return;
@@ -1084,7 +1084,7 @@ public class LevelGeneration2 : MonoBehaviour
 
                     //int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
 
-                    print("GOING DOWN AND REPLACING ROOM " + roomDetectionType);
+                    //print("GOING DOWN AND REPLACING ROOM " + roomDetectionType);
 
                     roomDetection.GetComponent<RoomType>().RoomDestruction();
 
@@ -1185,7 +1185,7 @@ public class LevelGeneration2 : MonoBehaviour
                 // yes, so stop for now
                 //print("CANT GO THIS WAY");
                 //branchAttemptCounter++;
-                print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
+                //print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
                 branchRoomAttemptCount[currentBranchToMoveIndex] += 1;
                 //continue;
                 return;
@@ -1198,7 +1198,7 @@ public class LevelGeneration2 : MonoBehaviour
             {
                 // don't want branch to go up multiple times
                 //print("REACHED UP LIMIT");
-                print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
+                //print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
                 branchRoomAttemptCount[currentBranchToMoveIndex] += 1;
                 //continue;
                 return;
@@ -1246,7 +1246,7 @@ public class LevelGeneration2 : MonoBehaviour
 
                     //int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
 
-                    print("GOING UP AND REPLACING ROOM " + roomDetectionType);
+                    //print("GOING UP AND REPLACING ROOM " + roomDetectionType);
 
                     roomDetection.GetComponent<RoomType>().RoomDestruction();
 
@@ -1347,7 +1347,7 @@ public class LevelGeneration2 : MonoBehaviour
                 // yes, so stop for now
                 //print("CANT GO THIS WAY");
                 //branchAttemptCounter++;
-                print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
+                //print("ADDING TO ATTEMPT : " + currentBranchToMoveIndex);
                 branchRoomAttemptCount[currentBranchToMoveIndex] += 1;
                 //continue;
                 return;

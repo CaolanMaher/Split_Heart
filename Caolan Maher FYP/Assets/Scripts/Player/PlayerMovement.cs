@@ -19,9 +19,10 @@ public class PlayerMovement : MonoBehaviour
 
     private int maxHealth = 100;
     [SerializeField] private int currentHealth;
+    private bool canBeHit = true;
 
-    private float hurtCooldown = 2f;
-    private float nextHurtTime = 0f;
+    private float hurtCooldown = 0.75f;
+    private float hurtTimer = 0;
 
     private int flashCooldown = 1;
 
@@ -107,6 +108,8 @@ public class PlayerMovement : MonoBehaviour
 
         CheckLedgeClimb();
 
+        DoTimers();
+
         //AnimatorControlleVariables();
 
         //CheckForLedge();
@@ -126,6 +129,20 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         MovePlayer();
+    }
+
+    void DoTimers()
+    {
+        if(!canBeHit)
+        {
+            hurtTimer += Time.deltaTime;
+
+            if(hurtTimer >= hurtCooldown)
+            {
+                hurtTimer = 0;
+                canBeHit = true;
+            }
+        }
     }
 
     void CheckSurroundings()
@@ -264,10 +281,19 @@ public class PlayerMovement : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        /*
         if (Time.time >= nextAttackTime)
         {
             currentHealth -= damage;
             nextHurtTime = Time.time + 1f / hurtCooldown;
+        }
+        */
+
+        if(canBeHit)
+        {
+            canBeHit = false;
+
+            currentHealth -= damage;
         }
 
         if(currentHealth <= 0)
