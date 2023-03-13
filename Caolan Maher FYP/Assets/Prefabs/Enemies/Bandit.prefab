@@ -191,6 +191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18e559d67a8e4be4198306883c3a96a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BTData: {fileID: 0}
   enemyRigidBody: {fileID: 3099775649837969100}
   wallDetector: {fileID: 3099775650011551102}
   floorDetector: {fileID: 6289248332942020352}
@@ -214,15 +215,14 @@ GameObject:
   - component: {fileID: 3099775649837969107}
   - component: {fileID: 3099775649837969100}
   - component: {fileID: 3099775649837969101}
-  - component: {fileID: 3099775649837969105}
-  - component: {fileID: 3099775649837969104}
-  - component: {fileID: 3099775649837969110}
   - component: {fileID: 3099775649837969111}
   - component: {fileID: 493860075}
   - component: {fileID: 8958136471748539208}
+  - component: {fileID: 8806238048371064281}
+  - component: {fileID: 2257463834508928883}
   m_Layer: 6
   m_Name: BanditCharacter
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -346,56 +346,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.513916, y: 0.9637282}
   m_EdgeRadius: 0
---- !u!114 &3099775649837969105
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3099775649837969102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fbfbb2898918274b88f608547899dd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &3099775649837969104
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3099775649837969102}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f1222ea108dcea4dbeb85133d58a2e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  direction: -1
-  isMovingRight: 0
-  wallDetector: {fileID: 3099775650011551102}
-  wallLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  healthBarObject: {fileID: 3099775650581370663}
---- !u!114 &3099775649837969110
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3099775649837969102}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48b02597b71e56e4db62189e11a98a1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerDetector: {fileID: 3099775650356587118}
-  playerMask:
-    serializedVersion: 2
-    m_Bits: 8
-  healthBar: {fileID: 3099775650581370661}
-  healthBarObject: {fileID: 3099775650581370663}
-  canvas: {fileID: 3099775650161995217}
 --- !u!61 &3099775649837969111
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -454,6 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18e559d67a8e4be4198306883c3a96a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BTData: {fileID: 8806238048371064281}
   enemyRigidBody: {fileID: 3099775649837969100}
   wallDetector: {fileID: 3099775650011551102}
   floorDetector: {fileID: 6289248332942020352}
@@ -465,6 +416,38 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   healthBarObject: {fileID: 3099775650581370663}
+--- !u!114 &8806238048371064281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3099775649837969102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f3cc369d3ea85445913658f9ec889f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isAttacking: 0
+--- !u!114 &2257463834508928883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3099775649837969102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48b02597b71e56e4db62189e11a98a1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerDetector: {fileID: 0}
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  healthBar: {fileID: 3099775650581370661}
+  healthBarObject: {fileID: 3099775650581370663}
+  canvas: {fileID: 3099775650161995217}
 --- !u!1 &3099775650011551103
 GameObject:
   m_ObjectHideFlags: 0

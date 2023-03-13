@@ -45,6 +45,8 @@ public class BanditTaskAttack : MyNode
 
             Collider2D player = Physics2D.OverlapCircle(_lightAttackPoint.position, lightAttackRadius, _playerLayerMask);
 
+            //Debug.Log(player.name);
+
             if(player != null)
             {
                 player.GetComponent<PlayerMovement>().TakeDamage(25);

@@ -43,7 +43,7 @@ public class EnemyCombat : MonoBehaviour
         currentHealth = maxHealth;
         healthBar.value = maxHealth;
 
-        canvas.SetActive(false);
+        //canvas.SetActive(false);
     }
 
     // Update is called once per frame
@@ -74,18 +74,18 @@ public class EnemyCombat : MonoBehaviour
         }
         */
 
-        Attack();
+        //Attack();
     }
 
     public void Attacked(int damage)
     {
+        /*
         if(Random.Range(0, 10) >= 5) // 1 in 2 chance to block attack
         {
             // attack blocked
             print("Blockked");
         }
-        else
-        {
+        */
             canvas.SetActive(true);
             // take damage
             currentHealth -= damage;
@@ -101,7 +101,6 @@ public class EnemyCombat : MonoBehaviour
                 // flash enemy
                 StartCoroutine(Flash());
             }
-        }
     }
 
     IEnumerator Flash()

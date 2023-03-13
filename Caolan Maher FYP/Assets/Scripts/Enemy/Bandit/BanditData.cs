@@ -1,8 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class BanditData : MonoBehaviour
 {
+
+    public bool isAttacking = false;
+
+
+
 }

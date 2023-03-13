@@ -10,11 +10,13 @@ public class CheckPlayerInAttackRange : MyNode
 
     private Transform _transform;
     private Animator anim;
+    private BanditData _data;
 
-    public CheckPlayerInAttackRange(Transform transform)
+    public CheckPlayerInAttackRange(Transform transform, BanditData data)
     {
         _transform = transform;
         anim = transform.GetComponent<Animator>();
+        _data = data;
     }
 
     public override NodeState Evaluate()
@@ -34,6 +36,8 @@ public class CheckPlayerInAttackRange : MyNode
             anim.SetBool("isLightAttacking", true);
             anim.SetBool("isRunning", false);
 
+            _data.isAttacking = true;
+
             state = NodeState.SUCCESS;
             return state;
         }
@@ -41,6 +45,8 @@ public class CheckPlayerInAttackRange : MyNode
         {
             anim.SetBool("isLightAttacking", false);
             anim.SetBool("isRunning", true);
+
+            _data.isAttacking = false;
 
             state = NodeState.FAILURE;
             return state;

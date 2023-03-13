@@ -17,6 +17,8 @@ public class PlayerMovement : MonoBehaviour
 
     // Health / Combat
 
+    private bool isAttacking = false;
+
     private int maxHealth = 100;
     [SerializeField] private int currentHealth;
     private bool canBeHit = true;
@@ -266,9 +268,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Attack()
     {
+        isAttacking = true;
+
         // Play animation
         playerAnimator.SetTrigger("attack");
 
+        /*
         // Check nearby enemies
         Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
@@ -277,6 +282,14 @@ public class PlayerMovement : MonoBehaviour
         {
             enemy.GetComponent<EnemyCombat>().Attacked(attackDamage);
         }
+        */
+
+        //isAttacking = false;
+    }
+
+    public void ResetAttackBool()
+    {
+        isAttacking = false;
     }
 
     public void TakeDamage(int damage)
@@ -331,6 +344,11 @@ public class PlayerMovement : MonoBehaviour
         isAlive = false;
         GetComponent<SpriteRenderer>().enabled = false;
         enabled = false;
+    }
+
+    public bool GetIsAttacking()
+    {
+        return isAttacking;
     }
 
     private void OnDrawGizmosSelected()
