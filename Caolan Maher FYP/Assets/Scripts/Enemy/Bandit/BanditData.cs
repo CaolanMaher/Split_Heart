@@ -5,8 +5,8 @@ using UnityEngine;
 public class BanditData : MonoBehaviour
 {
 
-    public bool isAttacking = false;
-
-
+    //public bool isAttacking = false;
+    //public bool canBeAttacked = true;
+    //public bool canBlock = true;
 
 }

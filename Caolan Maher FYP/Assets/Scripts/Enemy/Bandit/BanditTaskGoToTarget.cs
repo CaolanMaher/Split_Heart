@@ -8,10 +8,12 @@ public class BanditTaskGoToTarget : MyNode
 {
 
     private Transform banditTransform;
+    private EnemyCombat enemyCombat;
 
     public BanditTaskGoToTarget(Transform transform)
     {
         banditTransform = transform;
+        enemyCombat = transform.GetComponent<EnemyCombat>();
     }
 
     public override NodeState Evaluate()
@@ -27,6 +29,7 @@ public class BanditTaskGoToTarget : MyNode
             if(target.position.x > banditTransform.position.x)
             {
                 banditTransform.localScale = new Vector3(-1.25f, 1.25f, 1.25f);
+                //enemyCombat.Invoke("AllowBlock", 1f);
             }
             else
             {

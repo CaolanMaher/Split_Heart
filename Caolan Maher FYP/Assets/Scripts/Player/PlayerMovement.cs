@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Health / Combat
 
-    private bool isAttacking = false;
+    [SerializeField] private bool isAttacking = false;
 
     private int maxHealth = 100;
     [SerializeField] private int currentHealth;
@@ -35,8 +35,10 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask enemyLayers;
     public int attackDamage = 50;
 
+    private bool canAttack = true;
+
     private float attackRate = 2f;
-    private float nextAttackTime = 0f;
+    private float attackTimer = 0f;
 
     // Movement
 
@@ -108,6 +110,8 @@ public class PlayerMovement : MonoBehaviour
 
         CheckSurroundings();
 
+        CheckAttackInput();
+
         CheckLedgeClimb();
 
         DoTimers();
@@ -117,15 +121,6 @@ public class PlayerMovement : MonoBehaviour
         //CheckForLedge();
 
         //float attack = Input.GetAxisRaw("Fire1");
-
-        if (Time.time >= nextAttackTime)
-        {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                Attack();
-                nextAttackTime = Time.time + 1f / attackRate; // add half a second onto current time, means we can attack next in half a second
-            }
-        }
     }
 
     void FixedUpdate()
@@ -145,6 +140,38 @@ public class PlayerMovement : MonoBehaviour
                 canBeHit = true;
             }
         }
+    }
+
+    void CheckAttackInput()
+    {
+
+        if(!canAttack)
+        {
+            attackTimer += Time.deltaTime;
+
+            if(attackTimer > 0.25)
+            {
+                attackTimer = 0;
+                canAttack = true;
+            }
+        }
+
+        if(Input.GetKeyDown(KeyCode.Mouse0) && canAttack)
+        {
+            canAttack = false;
+            Attack();
+        }
+
+        /*
+        if (Time.time >= nextAttackTime)
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                Attack();
+                nextAttackTime = Time.time + 1f / attackRate; // add half a second onto current time, means we can attack next in half a second
+            }
+        }
+        */
     }
 
     void CheckSurroundings()
@@ -209,46 +236,51 @@ public class PlayerMovement : MonoBehaviour
 
     void MovementCalculations()
     {
-        float dirX = Input.GetAxis("Horizontal");
 
-        moveHorizontal = Input.GetAxisRaw("Horizontal");
-
-        if (dirX < 0 && canTurn)
+        if (canMove)
         {
-            transform.eulerAngles = new Vector3(
-                transform.eulerAngles.x,
-                180,
-                transform.eulerAngles.z
-            );
-            playerAnimator.SetBool("isRunning", true);
 
-            isFacingRight = false;
-        }
-        else if (dirX > 0 && canTurn)
-        {
-            transform.eulerAngles = new Vector3(
-                transform.eulerAngles.x,
-                0,
-                transform.eulerAngles.z
-            );
-            playerAnimator.SetBool("isRunning", true);
+            float dirX = Input.GetAxis("Horizontal");
 
-            isFacingRight = true;
-        }
-        else
-        {
-            transform.eulerAngles = new Vector3(
-                transform.eulerAngles.x,
-                transform.eulerAngles.y,
-                transform.eulerAngles.z
-            );
+            moveHorizontal = Input.GetAxisRaw("Horizontal");
 
-            playerAnimator.SetBool("isRunning", false);
-        }
+            if (dirX < 0 && canTurn)
+            {
+                transform.eulerAngles = new Vector3(
+                    transform.eulerAngles.x,
+                    180,
+                    transform.eulerAngles.z
+                );
+                playerAnimator.SetBool("isRunning", true);
 
-        if (Input.GetButtonDown("Jump") && !justJumped && isGrounded)
-        {
-            justJumped = true;
+                isFacingRight = false;
+            }
+            else if (dirX > 0 && canTurn)
+            {
+                transform.eulerAngles = new Vector3(
+                    transform.eulerAngles.x,
+                    0,
+                    transform.eulerAngles.z
+                );
+                playerAnimator.SetBool("isRunning", true);
+
+                isFacingRight = true;
+            }
+            else
+            {
+                transform.eulerAngles = new Vector3(
+                    transform.eulerAngles.x,
+                    transform.eulerAngles.y,
+                    transform.eulerAngles.z
+                );
+
+                playerAnimator.SetBool("isRunning", false);
+            }
+
+            if (Input.GetButtonDown("Jump") && !justJumped && isGrounded)
+            {
+                justJumped = true;
+            }
         }
     }
 
@@ -257,6 +289,10 @@ public class PlayerMovement : MonoBehaviour
         if (canMove)
         {
             playerRigidbody.velocity = new Vector2(moveHorizontal * movementSpeed * Time.deltaTime, playerRigidbody.velocity.y);
+        }
+        else
+        {
+            playerRigidbody.velocity = new Vector2(0, playerRigidbody.velocity.y);
         }
 
         if(justJumped)
@@ -270,26 +306,28 @@ public class PlayerMovement : MonoBehaviour
     {
         isAttacking = true;
 
+        canMove = false;
+
         // Play animation
         playerAnimator.SetTrigger("attack");
 
-        /*
         // Check nearby enemies
         Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
         // Damage enemies
         foreach(Collider2D enemy in enemiesHit)
         {
-            enemy.GetComponent<EnemyCombat>().Attacked(attackDamage);
+            enemy.GetComponent<EnemyCombat>().TakeDamage(attackDamage);
         }
-        */
 
         //isAttacking = false;
     }
 
+    // This is called at the end of the attack animation
     public void ResetAttackBool()
     {
         isAttacking = false;
+        canMove = true;
     }
 
     public void TakeDamage(int damage)

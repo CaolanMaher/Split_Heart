@@ -5,7 +5,7 @@ using UnityEngine;
 public class BanditBT : MyTree
 {
 
-    public BanditData BTData;
+    //public BanditData BTData;
 
     //private Rigidbody2D rigidbody;
     public Rigidbody2D enemyRigidBody;
@@ -35,7 +35,7 @@ public class BanditBT : MyTree
 
             new Sequence(new List<MyNode>
             {
-                new CheckPlayerInAttackRange(transform, BTData),
+                new CheckPlayerInAttackRange(transform),
 
                 new Selector(new List<MyNode>
                 {

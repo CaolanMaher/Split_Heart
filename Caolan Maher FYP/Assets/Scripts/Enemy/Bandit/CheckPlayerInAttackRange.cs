@@ -10,13 +10,15 @@ public class CheckPlayerInAttackRange : MyNode
 
     private Transform _transform;
     private Animator anim;
-    private BanditData _data;
+    private EnemyCombat enemyCombat;
+    //private BanditData _data;
 
-    public CheckPlayerInAttackRange(Transform transform, BanditData data)
+    public CheckPlayerInAttackRange(Transform transform)
     {
         _transform = transform;
         anim = transform.GetComponent<Animator>();
-        _data = data;
+        enemyCombat = transform.GetComponent<EnemyCombat>();
+        //_data = data;
     }
 
     public override NodeState Evaluate()
@@ -33,20 +35,28 @@ public class CheckPlayerInAttackRange : MyNode
         if(Vector2.Distance(_transform.position, target.position) < BanditBT.attackRange)
         {
             // play attack animation
-            anim.SetBool("isLightAttacking", true);
+            //anim.SetBool("isLightAttacking", true);
             anim.SetBool("isRunning", false);
 
-            _data.isAttacking = true;
+            //_data.isAttacking = true;
+            //enemyCombat.isAttacking = true;
+
+            //enemyCombat.canBeAttacked = false;
 
             state = NodeState.SUCCESS;
             return state;
         }
         else
         {
+            //Debug.Log("NOT");
             anim.SetBool("isLightAttacking", false);
+            anim.SetBool("isBlocking", false);
             anim.SetBool("isRunning", true);
 
-            _data.isAttacking = false;
+            //_data.isAttacking = false;
+            //enemyCombat.isAttacking = false;
+
+            enemyCombat.canBeAttacked = true;
 
             state = NodeState.FAILURE;
             return state;

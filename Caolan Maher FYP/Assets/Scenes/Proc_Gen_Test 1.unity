@@ -421,6 +421,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882ab8b16897c9a4883837bf5d1e115f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerScore: 0
+  enemyCount: 0
+  branchCount: 0
+  totalRoomCount: 0
+  totalDamageTaken: 0
+  timeToCompleteLevelEstimation: 0
+  timeInLevelSoFar: 0
 --- !u!4 &570191652
 Transform:
   m_ObjectHideFlags: 0
