@@ -397,5 +397,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+
+        //Gizmos.DrawWireSphere(transform.position, 6f);
     }
 }

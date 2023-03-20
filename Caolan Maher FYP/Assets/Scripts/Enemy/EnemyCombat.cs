@@ -25,11 +25,13 @@ public class EnemyCombat : MonoBehaviour
     private int maxHealth = 100;
     int currentHealth;
 
-    int flashCooldown = 1;
+    float flashCooldown = 0.5f;
 
     public bool isAttacking = false;
     public bool canBeAttacked = true;
     public bool canBlock = true;
+
+    public bool spottedPlayer = false;
 
     private Animator anim;
 
@@ -64,7 +66,7 @@ public class EnemyCombat : MonoBehaviour
             //anim.SetBool("isBlocking", false);
             anim.SetBool("hasJustTakenDamage", true);
 
-            Debug.Log("ATTACKED");
+            //Debug.Log("ATTACKED");
 
             // show health bar
             healthBarObject.SetActive(true);
@@ -117,19 +119,26 @@ public class EnemyCombat : MonoBehaviour
         isAlive = false;
         // disable enemy
         StopCoroutine(Flash());
-        GetComponent<SpriteRenderer>().enabled = false;
-        healthBarObject.SetActive(false);
-        GetComponent<Collider2D>().enabled = false;
-        enabled = false;
+        //GetComponent<SpriteRenderer>().enabled = false;
+        //healthBarObject.SetActive(false);
+        //GetComponent<Collider2D>().enabled = false;
+        //enabled = false;
+        gameObject.SetActive(false);
     }
 
     private void OnDrawGizmosSelected()
     {
+        /*
         if (playerDetector == null)
         {
             return;
         }
-        Gizmos.DrawWireSphere(playerDetector.position, playerDetectorRange);
-        Gizmos.DrawWireSphere(playerDetector.position, attackRange);
+        */
+        //Gizmos.DrawWireSphere(playerDetector.position, playerDetectorRange);
+        //Gizmos.DrawWireSphere(playerDetector.position, attackRange);
+
+        Gizmos.DrawWireSphere(transform.position, 6f);
+        Gizmos.DrawWireSphere(transform.position, 1f);
+        Gizmos.DrawWireSphere(transform.position, 10f);
     }
 }

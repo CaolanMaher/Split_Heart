@@ -191,7 +191,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18e559d67a8e4be4198306883c3a96a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BTData: {fileID: 0}
   enemyRigidBody: {fileID: 3099775649837969100}
   wallDetector: {fileID: 3099775650011551102}
   floorDetector: {fileID: 6289248332942020352}
@@ -202,6 +201,9 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 8
+  enemyLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
   healthBarObject: {fileID: 3099775650581370663}
 --- !u!1 &3099775649837969102
 GameObject:
@@ -404,7 +406,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18e559d67a8e4be4198306883c3a96a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BTData: {fileID: 8806238048371064281}
   enemyRigidBody: {fileID: 3099775649837969100}
   wallDetector: {fileID: 3099775650011551102}
   floorDetector: {fileID: 6289248332942020352}
@@ -415,6 +416,9 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 8
+  enemyLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
   healthBarObject: {fileID: 3099775650581370663}
 --- !u!114 &8806238048371064281
 MonoBehaviour:
@@ -428,8 +432,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3cc369d3ea85445913658f9ec889f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isAttacking: 0
-  canBeAttacked: 1
 --- !u!114 &2257463834508928883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,7 +444,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48b02597b71e56e4db62189e11a98a1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BTData: {fileID: 8806238048371064281}
   playerDetector: {fileID: 0}
   playerMask:
     serializedVersion: 2
@@ -450,6 +451,9 @@ MonoBehaviour:
   healthBarValue: {fileID: 3099775650581370661}
   healthBarObject: {fileID: 3099775650581370663}
   canvas: {fileID: 3099775650161995217}
+  isAttacking: 0
+  canBeAttacked: 1
+  canBlock: 1
 --- !u!1 &3099775650011551103
 GameObject:
   m_ObjectHideFlags: 0

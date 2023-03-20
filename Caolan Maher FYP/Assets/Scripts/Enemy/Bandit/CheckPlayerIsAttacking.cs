@@ -40,13 +40,13 @@ public class CheckPlayerIsAttacking : MyNode
 
         if(number >= 4 && !numberCheckDone)
         {
-            Debug.Log("NUMBER CHECKED");
+            //Debug.Log("NUMBER CHECKED");
             enemyCombat.canBeAttacked = true;
             numberCheckDone = true;
         }
         else if(number < 4 && !numberCheckDone)
         {
-            Debug.Log("NUMBER CHECKED");
+            //Debug.Log("NUMBER CHECKED");
             enemyCombat.canBeAttacked = false;
             numberCheckDone = true;
         }
@@ -64,7 +64,7 @@ public class CheckPlayerIsAttacking : MyNode
 
         if (target.GetComponent<PlayerMovement>().GetIsAttacking() && !enemyCombat.canBeAttacked)
         {
-            Debug.Log("Blocking");
+            //Debug.Log("Blocking");
 
             //anim.SetBool("isBlocking", true);
             //anim.SetBool("isLightAttacking", false);
@@ -81,7 +81,7 @@ public class CheckPlayerIsAttacking : MyNode
         }
         else
         {
-            Debug.Log("Testing");
+            //Debug.Log("Testing");
 
             //anim.SetBool("isBlocking", false);
             //anim.SetBool("isLightAttacking", true);

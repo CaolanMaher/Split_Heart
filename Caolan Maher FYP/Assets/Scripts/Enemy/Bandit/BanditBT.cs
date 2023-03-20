@@ -15,6 +15,7 @@ public class BanditBT : MyTree
     public Transform lightAttackPoint;
     public LayerMask wallLayerMask;
     public LayerMask playerLayerMask;
+    public LayerMask enemyLayerMask;
     public GameObject healthBarObject;
 
     //public int direction = -1;
@@ -26,6 +27,10 @@ public class BanditBT : MyTree
     public static float sightRange = 6f;
 
     public static float attackRange = 1f;
+
+    public static float checkNearbyEnemiesDistance = 10f;
+
+    public static float checkIfInGroupRange = 1f;
 
     protected override MyNode SetupTree()
     {
@@ -52,8 +57,27 @@ public class BanditBT : MyTree
             new Sequence(new List<MyNode>
             {
                 new CheckPlayerInSightRange(transform),
+
+                new Selector(new List<MyNode>
+                {
+                    new Sequence(new List<MyNode>
+                    {
+                        new CheckIfNotInGroup(transform, enemyLayerMask),
+                        new CheckEnemiesNearby(transform, enemyLayerMask),
+                        new BanditTaskGoToNearbyEnemy(transform)
+                    }),
+
+                    new BanditTaskGoToTarget(transform)
+                })
+            }),
+
+            /*
+            new Sequence(new List<MyNode>
+            {
+                new CheckPlayerInSightRange(transform),
                 new BanditTaskGoToTarget(transform)
             }),
+            */
 
             new BanditTaskPatrol(transform, enemyRigidBody, wallDetector, floorDetector, wallLayerMask, healthBarObject)
         });
