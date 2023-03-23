@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D playerRigidbody;
     private Animator playerAnimator;
+    private AnimatorStateInfo playerStateInfo;
 
     // Health / Combat
 
@@ -116,6 +117,8 @@ public class PlayerMovement : MonoBehaviour
 
         DoTimers();
 
+        playerStateInfo = playerAnimator.GetCurrentAnimatorStateInfo(0);
+
         //AnimatorControlleVariables();
 
         //CheckForLedge();
@@ -140,23 +143,23 @@ public class PlayerMovement : MonoBehaviour
                 canBeHit = true;
             }
         }
-    }
 
-    void CheckAttackInput()
-    {
-
-        if(!canAttack)
+        if (!canAttack)
         {
             attackTimer += Time.deltaTime;
 
-            if(attackTimer > 0.25)
+            if (attackTimer > 0.1)
             {
                 attackTimer = 0;
                 canAttack = true;
             }
         }
+    }
 
-        if(Input.GetKeyDown(KeyCode.Mouse0) && canAttack)
+    void CheckAttackInput()
+    {
+
+        if(Input.GetKeyDown(KeyCode.Mouse0) && canAttack && !canClimbLedge)
         {
             canAttack = false;
             Attack();
@@ -308,8 +311,21 @@ public class PlayerMovement : MonoBehaviour
 
         canMove = false;
 
-        // Play animation
-        playerAnimator.SetTrigger("attack");
+        if (playerStateInfo.IsName("Player_Attack_Move_1") && playerStateInfo.normalizedTime % 1 > 0.35)
+        {
+            // Play first move animation
+            playerAnimator.SetTrigger("performComboMove");
+        }
+        else if(playerStateInfo.IsName("Player_Attack_Move_2") && playerStateInfo.normalizedTime % 1 > 0.35)
+        {
+            // Play first move animation
+            playerAnimator.SetTrigger("attack");
+        }
+        else if (!playerStateInfo.IsName("Player_Attack_Move_1"))
+        {
+            // Play combo move animation
+            playerAnimator.SetTrigger("attack");
+        }
 
         // Check nearby enemies
         Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
@@ -319,6 +335,8 @@ public class PlayerMovement : MonoBehaviour
         {
             enemy.GetComponent<EnemyCombat>().TakeDamage(attackDamage);
         }
+
+
 
         //isAttacking = false;
     }
