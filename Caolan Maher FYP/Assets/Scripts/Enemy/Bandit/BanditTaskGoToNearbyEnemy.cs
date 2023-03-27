@@ -23,17 +23,19 @@ public class BanditTaskGoToNearbyEnemy : MyNode
 
             Debug.Log("GOING TO ENEMY");
 
-            Vector2 directionToEnemy = (_transform.position - nearbyEnemy.position).normalized;
-            _transform.Translate(directionToEnemy * BanditBT.movementSpeed * Time.deltaTime);
+            //Vector2 directionToEnemy = (_transform.position - nearbyEnemy.position).normalized;
+            //_transform.Translate(directionToEnemy * BanditBT.movementSpeed * Time.deltaTime);
 
             if (nearbyEnemy.position.x > _transform.position.x)
             {
                 _transform.localScale = new Vector3(-1.25f, 1.25f, 1.25f);
+                _transform.Translate(-(Vector2.right) * BanditBT.movementSpeed * Time.deltaTime);
                 //enemyCombat.Invoke("AllowBlock", 1f);
             }
             else
             {
                 _transform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
+                _transform.Translate(Vector2.right * BanditBT.movementSpeed * Time.deltaTime);
             }
 
             //Vector2.MoveTowards(banditTransform.position, target.position, BanditBT.movementSpeed);

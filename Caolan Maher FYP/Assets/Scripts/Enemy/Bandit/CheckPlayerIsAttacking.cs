@@ -62,7 +62,7 @@ public class CheckPlayerIsAttacking : MyNode
             }
         }
 
-        if (target.GetComponent<PlayerMovement>().GetIsAttacking() && !enemyCombat.canBeAttacked)
+        if (target.GetComponent<Player>().GetIsAttacking() && !enemyCombat.canBeAttacked)
         {
             //Debug.Log("Blocking");
 

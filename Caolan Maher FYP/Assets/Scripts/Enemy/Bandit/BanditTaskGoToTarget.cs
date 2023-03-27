@@ -23,17 +23,19 @@ public class BanditTaskGoToTarget : MyNode
         if(Vector2.Distance(banditTransform.position, target.position) > 1f)
         {
 
-            Vector2 directionToTarget = (banditTransform.position - target.position).normalized;
-            banditTransform.Translate(directionToTarget * BanditBT.movementSpeed * Time.deltaTime);
+            //Vector2 directionToTarget = (banditTransform.position - target.position).normalized;
+            //banditTransform.Translate(directionToTarget * BanditBT.movementSpeed * Time.deltaTime);
             
             if(target.position.x > banditTransform.position.x)
             {
                 banditTransform.localScale = new Vector3(-1.25f, 1.25f, 1.25f);
+                banditTransform.Translate(-(Vector2.right) * BanditBT.movementSpeed * Time.deltaTime);
                 //enemyCombat.Invoke("AllowBlock", 1f);
             }
             else
             {
                 banditTransform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
+                banditTransform.Translate(Vector2.right * BanditBT.movementSpeed * Time.deltaTime);
             }
 
             //Vector2.MoveTowards(banditTransform.position, target.position, BanditBT.movementSpeed);

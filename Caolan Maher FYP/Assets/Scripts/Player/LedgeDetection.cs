@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class LedgeDetection : MonoBehaviour
 {
+    /*
     [SerializeField] float radius;
 
     [SerializeField] LayerMask groundMask;
 
-    [SerializeField] PlayerMovement playerMovement;
+    //[SerializeField] Player player;
 
     [SerializeField] bool canDetect;
 
@@ -48,4 +49,5 @@ public class LedgeDetection : MonoBehaviour
     {
         Gizmos.DrawWireSphere(transform.position, radius);
     }
+    */
 }

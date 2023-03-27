@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour
 {
 
     // for prototype only
@@ -91,6 +91,10 @@ public class PlayerMovement : MonoBehaviour
     public Vector2 ledgeClimbOffset1;
     public Vector2 ledgeClimbOffset2;
 
+    // UI & HUD References
+
+    public Slider healthBar;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -98,6 +102,9 @@ public class PlayerMovement : MonoBehaviour
         playerAnimator = GetComponent<Animator>();
 
         currentHealth = maxHealth;
+        healthBar.value = maxHealth;
+        healthBar.maxValue = maxHealth;
+        healthBar.minValue = 0;
     }
 
     // Update is called once per frame
@@ -350,28 +357,24 @@ public class PlayerMovement : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        /*
-        if (Time.time >= nextAttackTime)
-        {
-            currentHealth -= damage;
-            nextHurtTime = Time.time + 1f / hurtCooldown;
-        }
-        */
 
         if(canBeHit)
         {
             canBeHit = false;
 
             currentHealth -= damage;
+
+            healthBar.value = currentHealth;
         }
 
         if(currentHealth <= 0)
         {
+            healthBar.value = 0;
             Die();
         }
         else
         {
-            // flash enemy
+            // flash player
             StartCoroutine(Flash());
         }
     }

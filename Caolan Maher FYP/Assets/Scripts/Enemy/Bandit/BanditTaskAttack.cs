@@ -54,7 +54,7 @@ public class BanditTaskAttack : MyNode
 
             if(player != null)
             {
-                player.GetComponent<PlayerMovement>().TakeDamage(25);
+                player.GetComponent<Player>().TakeDamage(25);
             }
 
             /*
