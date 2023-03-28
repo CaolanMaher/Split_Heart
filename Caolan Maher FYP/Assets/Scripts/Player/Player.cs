@@ -20,8 +20,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private bool isAttacking = false;
 
-    private int maxHealth = 100;
-    [SerializeField] private int currentHealth;
+    private float maxHealth = 100;
+    [SerializeField] private float currentHealth;
     private bool canBeHit = true;
 
     private float hurtCooldown = 0.75f;
@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
     public Transform attackPoint;
     private float attackRange = 0.75f;
     public LayerMask enemyLayers;
-    public int attackDamage = 50;
+    public float attackDamage = 50;
 
     private bool canAttack = true;
 
@@ -91,6 +91,16 @@ public class Player : MonoBehaviour
     public Vector2 ledgeClimbOffset1;
     public Vector2 ledgeClimbOffset2;
 
+    // Fury References
+
+    bool isFurySide = false;
+    bool canTransform = true;
+    bool isTransforming = false;
+    float transformCooldown = 10f;
+    float transformCooldownTimer = 0f;
+    float timeInFurySide = 0f;
+    float furySideLength = 15f;
+
     // UI & HUD References
 
     public Slider healthBar;
@@ -118,7 +128,7 @@ public class Player : MonoBehaviour
 
         CheckSurroundings();
 
-        CheckAttackInput();
+        CheckInputs();
 
         CheckLedgeClimb();
 
@@ -151,7 +161,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (!canAttack)
+        if (!canAttack && !isTransforming)
         {
             attackTimer += Time.deltaTime;
 
@@ -161,9 +171,32 @@ public class Player : MonoBehaviour
                 canAttack = true;
             }
         }
+
+        if(isFurySide)
+        {
+            timeInFurySide += Time.deltaTime;
+
+            if(timeInFurySide >= furySideLength)
+            {
+                timeInFurySide = 0;
+                TransformToNormal();
+            }
+        }
+
+        if(!isFurySide && !canTransform)
+        {
+            transformCooldownTimer += Time.deltaTime;
+
+            if(transformCooldownTimer >= transformCooldown)
+            {
+                //print("CAN TRANSFORM");
+                transformCooldownTimer = 0;
+                canTransform = true;
+            }
+        }
     }
 
-    void CheckAttackInput()
+    void CheckInputs()
     {
 
         if(Input.GetKeyDown(KeyCode.Mouse0) && canAttack && !canClimbLedge)
@@ -172,16 +205,11 @@ public class Player : MonoBehaviour
             Attack();
         }
 
-        /*
-        if (Time.time >= nextAttackTime)
+        if(Input.GetKeyDown(KeyCode.X) && canTransform && !canClimbLedge)
         {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                Attack();
-                nextAttackTime = Time.time + 1f / attackRate; // add half a second onto current time, means we can attack next in half a second
-            }
+            canTransform = false;
+            TransformToFury();
         }
-        */
     }
 
     void CheckSurroundings()
@@ -318,17 +346,17 @@ public class Player : MonoBehaviour
 
         canMove = false;
 
-        if (playerStateInfo.IsName("Player_Attack_Move_1") && playerStateInfo.normalizedTime % 1 > 0.35)
+        if ((playerStateInfo.IsName("Player_Attack_Move_1") || playerStateInfo.IsName("Player_Attack_Move_1_Fury")) && playerStateInfo.normalizedTime % 1 > 0.35)
         {
             // Play first move animation
             playerAnimator.SetTrigger("performComboMove");
         }
-        else if(playerStateInfo.IsName("Player_Attack_Move_2") && playerStateInfo.normalizedTime % 1 > 0.35)
+        else if((playerStateInfo.IsName("Player_Attack_Move_2") || playerStateInfo.IsName("Player_Attack_Move_2_Fury")) && playerStateInfo.normalizedTime % 1 > 0.35)
         {
             // Play first move animation
             playerAnimator.SetTrigger("attack");
         }
-        else if (!playerStateInfo.IsName("Player_Attack_Move_1"))
+        else if (!playerStateInfo.IsName("Player_Attack_Move_1") && !playerStateInfo.IsName("Player_Attack_Move_1_Fury"))
         {
             // Play combo move animation
             playerAnimator.SetTrigger("attack");
@@ -342,17 +370,68 @@ public class Player : MonoBehaviour
         {
             enemy.GetComponent<EnemyCombat>().TakeDamage(attackDamage);
         }
-
-
-
-        //isAttacking = false;
     }
 
     // This is called at the end of the attack animation
     public void ResetAttackBool()
     {
         isAttacking = false;
+        ResetMoveBool();
+    }
+
+    // This is called at the end of both transformation animations and when ResetAttackBool is called
+    public void ResetMoveBool()
+    {
         canMove = true;
+    }
+
+    // This is called at the end of both transformation animations
+    public void ResetTransformBool()
+    {
+        isTransforming = false;
+        ResetMoveBool();
+    }
+
+    public void TransformToFury()
+    {
+        isTransforming = true;
+
+        playerAnimator.SetTrigger("transformToFury");
+        playerAnimator.SetBool("isFury", true);
+
+        isFurySide = true;
+
+        canMove = false;
+        canAttack = false;
+
+        //canTransform = false;
+
+        // change stats and timers
+        timeInFurySide = 0;
+
+        movementSpeed *= 1.25f;
+        attackDamage *= 1.5f;
+    }
+
+    public void TransformToNormal()
+    {
+        isTransforming = true;
+
+        //print("BACK TO NORMAL");
+        playerAnimator.SetTrigger("transformToNormal");
+
+        playerAnimator.SetBool("isFury", false);
+
+        isFurySide = false;
+
+        canMove = false;
+        canAttack = false;
+
+        // reset stats and timers
+        timeInFurySide = 0;
+
+        movementSpeed /= 1.25f;
+        attackDamage /= 1.5f;
     }
 
     public void TakeDamage(int damage)

@@ -28,7 +28,7 @@ public class CheckIfNotInGroup : MyNode
             {
                 if(enemy.transform.root != _transform.root)
                 {
-                    Debug.Log("In Group");
+                    //Debug.Log("In Group");
 
                     _enemyCombat.spottedPlayer = false;
 
@@ -36,13 +36,13 @@ public class CheckIfNotInGroup : MyNode
                     return state;
                 }
             }
-            Debug.Log("Only Found Self");
+            //Debug.Log("Only Found Self");
             state = NodeState.SUCCESS;
             return state;
         }
         else
         {
-            Debug.Log("Not In Group");
+            //Debug.Log("Not In Group");
             state = NodeState.SUCCESS;
             return state;
         }

@@ -22,8 +22,8 @@ public class EnemyCombat : MonoBehaviour
     public GameObject healthBarObject;
     public GameObject canvas;
 
-    private int maxHealth = 100;
-    int currentHealth;
+    private float maxHealth = 100;
+    float currentHealth;
 
     float flashCooldown = 0.5f;
 
@@ -58,7 +58,7 @@ public class EnemyCombat : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         if (canBeAttacked)
         {

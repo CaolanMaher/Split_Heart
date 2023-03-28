@@ -34,19 +34,19 @@ public class CheckEnemiesNearby : MyNode
                     {
                         parent.parent.SetData("nearbyEnemy", enemy.transform);
 
-                        Debug.Log("Found Suitable Enemy at " + enemy.transform.position.x);
+                        //Debug.Log("Found Suitable Enemy at " + enemy.transform.position.x);
                         state = NodeState.SUCCESS;
                         return state;
                     }
                 }
             }
-            Debug.Log("No Enemies Suitable");
+            //Debug.Log("No Enemies Suitable");
             state = NodeState.FAILURE;
             return state;
         }
         else
         {
-            Debug.Log("Found No Enemy");
+            //Debug.Log("Found No Enemy");
             state = NodeState.FAILURE;
             return state;
         }
