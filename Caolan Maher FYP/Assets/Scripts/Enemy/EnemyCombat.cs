@@ -10,6 +10,19 @@ public class EnemyCombat : MonoBehaviour
 
     private bool isAlive = true;
 
+    [SerializeField] private Transform isGroundedChecker_1;
+    [SerializeField] private Transform isGroundedChecker_2;
+
+    private float groundCheckDistance = 0.2f;
+
+    [SerializeField] private LayerMask groundLayer;
+
+    Rigidbody2D rb;
+
+    private float jumpForce = 55f;
+
+    public bool justJumped = false;
+
     [SerializeField] private Transform playerDetector;
 
     [SerializeField] private LayerMask playerMask;
@@ -33,6 +46,8 @@ public class EnemyCombat : MonoBehaviour
 
     public bool spottedPlayer = false;
 
+    public bool isGrounded = false;
+
     private Animator anim;
 
     // Start is called before the first frame update
@@ -44,6 +59,8 @@ public class EnemyCombat : MonoBehaviour
         healthBarObject.SetActive(false);
 
         anim = GetComponent<Animator>();
+
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
@@ -56,6 +73,28 @@ public class EnemyCombat : MonoBehaviour
         {
             healthBarObject.transform.localScale = new Vector3(1, 1, 1);
         }
+
+        CheckIsGrounded();
+    }
+
+    private void FixedUpdate()
+    {
+        if (justJumped)
+        {
+            justJumped = false;
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        }
+    }
+
+    void CheckIsGrounded()
+    {
+        isGrounded = Physics2D.Raycast(isGroundedChecker_1.position, -transform.up, groundCheckDistance, groundLayer)
+            || Physics2D.Raycast(isGroundedChecker_2.position, -transform.up, groundCheckDistance, groundLayer);
+    }
+
+    public void Jump()
+    {
+        justJumped = true;
     }
 
     public void TakeDamage(float damage)

@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &169189455
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 169189456}
+  m_Layer: 6
+  m_Name: IsGroundedChecker_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &169189456
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 169189455}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.4881, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3099775649837969106}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &408996238
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,6 +61,68 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3099775649837969106}
   m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1638208113
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1638208114}
+  m_Layer: 6
+  m_Name: IsGroundedChecker_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1638208114
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1638208113}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.326, y: -0.483, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3099775649837969106}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1987657007
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1987657008}
+  m_Layer: 6
+  m_Name: HigherWallDetector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1987657008
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987657007}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3099775649837969106}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1989996065
 GameObject:
@@ -193,6 +286,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyRigidBody: {fileID: 3099775649837969100}
   wallDetector: {fileID: 3099775650011551102}
+  higherWallDetector: {fileID: 0}
   floorDetector: {fileID: 6289248332942020352}
   lightAttackPoint: {fileID: 408996239}
   wallLayerMask:
@@ -246,6 +340,9 @@ Transform:
   - {fileID: 3099775650356587118}
   - {fileID: 6289248332942020352}
   - {fileID: 408996239}
+  - {fileID: 1987657008}
+  - {fileID: 169189456}
+  - {fileID: 1638208114}
   m_Father: {fileID: 3099775648923534490}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -408,6 +505,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyRigidBody: {fileID: 3099775649837969100}
   wallDetector: {fileID: 3099775650011551102}
+  higherWallDetector: {fileID: 1987657008}
   floorDetector: {fileID: 6289248332942020352}
   lightAttackPoint: {fileID: 408996239}
   wallLayerMask:
@@ -444,6 +542,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48b02597b71e56e4db62189e11a98a1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isGroundedChecker_1: {fileID: 169189456}
+  isGroundedChecker_2: {fileID: 1638208114}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 128
   playerDetector: {fileID: 0}
   playerMask:
     serializedVersion: 2
@@ -454,6 +557,8 @@ MonoBehaviour:
   isAttacking: 0
   canBeAttacked: 1
   canBlock: 1
+  spottedPlayer: 0
+  isGrounded: 0
 --- !u!1 &3099775650011551103
 GameObject:
   m_ObjectHideFlags: 0

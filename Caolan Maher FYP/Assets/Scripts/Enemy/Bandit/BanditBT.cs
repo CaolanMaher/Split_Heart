@@ -10,6 +10,7 @@ public class BanditBT : MyTree
     //private Rigidbody2D rigidbody;
     public Rigidbody2D enemyRigidBody;
     public Transform wallDetector;
+    public Transform higherWallDetector;
     public Transform floorDetector;
     //public Transform playerDetector;
     public Transform lightAttackPoint;
@@ -64,10 +65,10 @@ public class BanditBT : MyTree
                     {
                         new CheckIfNotInGroup(transform, enemyLayerMask),
                         new CheckEnemiesNearby(transform, enemyLayerMask),
-                        new BanditTaskGoToNearbyEnemy(transform)
+                        new BanditTaskGoToNearbyEnemy(transform, wallDetector, higherWallDetector, wallLayerMask)
                     }),
 
-                    new BanditTaskGoToTarget(transform)
+                    new BanditTaskGoToTarget(transform, wallDetector, higherWallDetector, wallLayerMask)
                 })
             }),
 
