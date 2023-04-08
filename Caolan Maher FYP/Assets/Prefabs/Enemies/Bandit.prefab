@@ -547,6 +547,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 128
+  justJumped: 0
   playerDetector: {fileID: 0}
   playerMask:
     serializedVersion: 2

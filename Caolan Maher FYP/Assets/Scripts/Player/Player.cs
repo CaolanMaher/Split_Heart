@@ -176,7 +176,7 @@ public class Player : MonoBehaviour
         {
             timeInFurySide += Time.deltaTime;
 
-            if(timeInFurySide >= furySideLength)
+            if(timeInFurySide >= furySideLength && !canClimbLedge && isGrounded)
             {
                 timeInFurySide = 0;
                 TransformToNormal();
@@ -205,7 +205,7 @@ public class Player : MonoBehaviour
             Attack();
         }
 
-        if(Input.GetKeyDown(KeyCode.X) && canTransform && !canClimbLedge)
+        if(Input.GetKeyDown(KeyCode.X) && canTransform && !canClimbLedge && isGrounded)
         {
             canTransform = false;
             TransformToFury();
