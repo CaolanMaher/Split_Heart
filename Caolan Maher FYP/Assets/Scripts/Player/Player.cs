@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
     // for prototype only
     //public GameObject mainCamera;
 
+    public PlayManager playManager;
+
     // General References
 
     private Rigidbody2D playerRigidbody;
@@ -32,7 +34,7 @@ public class Player : MonoBehaviour
     // Attacking
 
     public Transform attackPoint;
-    private float attackRange = 0.75f;
+    private float attackRange = 0.5f;
     public LayerMask enemyLayers;
     public float attackDamage = 50;
 
@@ -57,6 +59,8 @@ public class Player : MonoBehaviour
     private bool canTurn = true;
 
     private bool canMove = true;
+
+    //private bool takeUserMoveInput = true;
 
     // Ground Detection
 
@@ -94,16 +98,20 @@ public class Player : MonoBehaviour
     // Fury References
 
     bool isFurySide = false;
-    bool canTransform = true;
+    bool canTransform = false;
     bool isTransforming = false;
-    float transformCooldown = 10f;
-    float transformCooldownTimer = 0f;
-    float timeInFurySide = 0f;
-    float furySideLength = 15f;
+    //float transformCooldown = 10f;
+    //float transformCooldownTimer = 0f;
+    //float timeInFurySide = 0f;
+    //float furySideLength = 15f;
+
+    float maxFuryCharge = 15f;
+    float currentFuryCharge = 0f;
 
     // UI & HUD References
 
     public Slider healthBar;
+    public Slider furyBar;
 
     // Start is called before the first frame update
     void Start()
@@ -115,6 +123,11 @@ public class Player : MonoBehaviour
         healthBar.value = maxHealth;
         healthBar.maxValue = maxHealth;
         healthBar.minValue = 0;
+
+        currentFuryCharge = 0f;
+        furyBar.value = currentFuryCharge;
+        furyBar.maxValue = maxFuryCharge;
+        furyBar.minValue = 0;
     }
 
     // Update is called once per frame
@@ -174,23 +187,22 @@ public class Player : MonoBehaviour
 
         if(isFurySide)
         {
-            timeInFurySide += Time.deltaTime;
+            furyBar.value -= Time.deltaTime;
 
-            if(timeInFurySide >= furySideLength && !canClimbLedge && isGrounded)
+            if(furyBar.value <= 0 && !canClimbLedge && isGrounded)
             {
-                timeInFurySide = 0;
+                furyBar.value = 0;
                 TransformToNormal();
             }
         }
 
         if(!isFurySide && !canTransform)
         {
-            transformCooldownTimer += Time.deltaTime;
+            furyBar.value += Time.deltaTime * 0.1f;
 
-            if(transformCooldownTimer >= transformCooldown)
+            if (furyBar.value >= furyBar.maxValue)
             {
-                //print("CAN TRANSFORM");
-                transformCooldownTimer = 0;
+                furyBar.value = furyBar.maxValue;
                 canTransform = true;
             }
         }
@@ -198,14 +210,14 @@ public class Player : MonoBehaviour
 
     void CheckInputs()
     {
-
         if(Input.GetKeyDown(KeyCode.Mouse0) && canAttack && !canClimbLedge)
         {
             canAttack = false;
             Attack();
         }
 
-        if(Input.GetKeyDown(KeyCode.X) && canTransform && !canClimbLedge && isGrounded)
+        // only if fury bar is full
+        if (Input.GetKeyDown(KeyCode.X) && canTransform && !canClimbLedge && isGrounded && furyBar.value >= furyBar.maxValue)
         {
             canTransform = false;
             TransformToFury();
@@ -338,13 +350,35 @@ public class Player : MonoBehaviour
             justJumped = false;
             playerRigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
+
+        // player is in air
+        if(!isGrounded)
+        {
+            playerAnimator.SetBool("isInAir", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("isInAir", false);
+        }
     }
 
     void Attack()
     {
         isAttacking = true;
 
-        canMove = false;
+        //canMove = false;
+
+        //takeUserMoveInput = false;
+
+        if (isGrounded)
+        {
+            canMove = false;
+        }
+        else
+        {
+            // cut current momentum by half
+            //playerRigidbody.velocity = new Vector2(playerRigidbody.velocity.x / 2, playerRigidbody.velocity.y / 2);
+        }
 
         if ((playerStateInfo.IsName("Player_Attack_Move_1") || playerStateInfo.IsName("Player_Attack_Move_1_Fury")) && playerStateInfo.normalizedTime % 1 > 0.35)
         {
@@ -362,11 +396,26 @@ public class Player : MonoBehaviour
             playerAnimator.SetTrigger("attack");
         }
 
+        /*
         // Check nearby enemies
         Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
         // Damage enemies
         foreach(Collider2D enemy in enemiesHit)
+        {
+            enemy.GetComponent<EnemyCombat>().TakeDamage(attackDamage);
+        }
+        */
+    }
+
+    // This is called during each attack animation
+    public void AttackEnemies()
+    {
+        // Check nearby enemies
+        Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+        // Damage enemies
+        foreach (Collider2D enemy in enemiesHit)
         {
             enemy.GetComponent<EnemyCombat>().TakeDamage(attackDamage);
         }
@@ -383,6 +432,7 @@ public class Player : MonoBehaviour
     public void ResetMoveBool()
     {
         canMove = true;
+        //takeUserMoveInput = true;
     }
 
     // This is called at the end of both transformation animations
@@ -407,7 +457,7 @@ public class Player : MonoBehaviour
         //canTransform = false;
 
         // change stats and timers
-        timeInFurySide = 0;
+        //timeInFurySide = 0;
 
         movementSpeed *= 1.25f;
         attackDamage *= 1.5f;
@@ -428,7 +478,7 @@ public class Player : MonoBehaviour
         canAttack = false;
 
         // reset stats and timers
-        timeInFurySide = 0;
+        //timeInFurySide = 0;
 
         movementSpeed /= 1.25f;
         attackDamage /= 1.5f;
@@ -477,11 +527,21 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void KilledEnemy()
+    {
+        if(furyBar.value < furyBar.maxValue)
+        {
+            furyBar.value += furyBar.maxValue / 10; 
+        }
+    }
+
     void Die()
     {
         isAlive = false;
         GetComponent<SpriteRenderer>().enabled = false;
         enabled = false;
+
+        playManager.PlayerDied();
     }
 
     public bool GetIsAttacking()

@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Prison_Atlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 0
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 0
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: c53cc9a62fa47fc4aa936a77a34f0b05, type: 3}
+    - {fileID: 2800000, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: -1625156478, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: -1052465765, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: -1991299101, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: 643834884, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: 1892631749, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: -2097277704, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: 1929550043, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: -357848632, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: 1330418296, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: 547384147, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: -921427645, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: 894736707, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: -1069553496, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: -1172684624, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: -890285942, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: 741100346, guid: 7beedd504d3a09046a2131282f837815, type: 3}
+  - {fileID: -1503483042, guid: c53cc9a62fa47fc4aa936a77a34f0b05, type: 3}
+  - {fileID: -1363577047, guid: c53cc9a62fa47fc4aa936a77a34f0b05, type: 3}
+  - {fileID: 1869279709, guid: c53cc9a62fa47fc4aa936a77a34f0b05, type: 3}
+  - {fileID: 1426743439, guid: c53cc9a62fa47fc4aa936a77a34f0b05, type: 3}
+  - {fileID: -1576411575, guid: c53cc9a62fa47fc4aa936a77a34f0b05, type: 3}
+  - {fileID: -1666810478, guid: c53cc9a62fa47fc4aa936a77a34f0b05, type: 3}
+  - {fileID: -1150670498, guid: c53cc9a62fa47fc4aa936a77a34f0b05, type: 3}
+  - {fileID: 198422401, guid: c53cc9a62fa47fc4aa936a77a34f0b05, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Pixilart Sprite Sheet_3
+  - Pixilart Sprite Sheet_2
+  - Pixilart Sprite Sheet_1
+  - Pixilart Sprite Sheet_0
+  - Pixilart Sprite Sheet_7
+  - Pixilart Sprite Sheet_6
+  - Pixilart Sprite Sheet_5
+  - Pixilart Sprite Sheet_4
+  - Pixilart Sprite Sheet_9
+  - Pixilart Sprite Sheet_8
+  - Pixilart Sprite Sheet_14
+  - Pixilart Sprite Sheet_15
+  - Pixilart Sprite Sheet_12
+  - Pixilart Sprite Sheet_13
+  - Pixilart Sprite Sheet_10
+  - Pixilart Sprite Sheet_11
+  - Prison_Background_Tileset_Sheet_Extra_2_1
+  - Prison_Background_Tileset_Sheet_Extra_2_0
+  - Prison_Background_Tileset_Sheet_Extra_2_3
+  - Prison_Background_Tileset_Sheet_Extra_2_2
+  - Prison_Background_Tileset_Sheet_Extra_2_5
+  - Prison_Background_Tileset_Sheet_Extra_2_4
+  - Prison_Background_Tileset_Sheet_Extra_2_7
+  - Prison_Background_Tileset_Sheet_Extra_2_6
+  m_RenderDataMap: {}
+  m_Tag: Prison_Atlas
+  m_IsVariant: 0

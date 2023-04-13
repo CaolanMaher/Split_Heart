@@ -8,6 +8,8 @@ public class EnemyCombat : MonoBehaviour
 
     //public BanditData BTData;
 
+    //Player player;
+
     private bool isAlive = true;
 
     [SerializeField] private Transform isGroundedChecker_1;
@@ -23,7 +25,7 @@ public class EnemyCombat : MonoBehaviour
 
     public bool justJumped = false;
 
-    [SerializeField] private Transform playerDetector;
+    //[SerializeField] private Transform playerDetector;
 
     [SerializeField] private LayerMask playerMask;
 
@@ -33,9 +35,9 @@ public class EnemyCombat : MonoBehaviour
 
     public Slider healthBarValue;
     public GameObject healthBarObject;
-    public GameObject canvas;
+    //public GameObject canvas;
 
-    private float maxHealth = 100;
+    public float maxHealth = 250;
     float currentHealth;
 
     float flashCooldown = 0.5f;
@@ -43,6 +45,7 @@ public class EnemyCombat : MonoBehaviour
     public bool isAttacking = false;
     public bool canBeAttacked = true;
     public bool canBlock = true;
+    public bool canTurn = true;
 
     public bool spottedPlayer = false;
 
@@ -54,13 +57,18 @@ public class EnemyCombat : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-        healthBarValue.value = maxHealth;
+        healthBarValue.maxValue = maxHealth;
+        healthBarValue.minValue = 0;
+        healthBarValue.value = healthBarValue.maxValue;
+        //currentHealth = healthBarValue.value;
 
         healthBarObject.SetActive(false);
 
         anim = GetComponent<Animator>();
 
         rb = GetComponent<Rigidbody2D>();
+
+        //player = GameObject.FindWithTag("Player").GetComponent<Player>();
     }
 
     private void Update()
@@ -88,8 +96,12 @@ public class EnemyCombat : MonoBehaviour
 
     void CheckIsGrounded()
     {
-        isGrounded = Physics2D.Raycast(isGroundedChecker_1.position, -transform.up, groundCheckDistance, groundLayer)
-            || Physics2D.Raycast(isGroundedChecker_2.position, -transform.up, groundCheckDistance, groundLayer);
+
+        if (isGroundedChecker_1 && isGroundedChecker_2)
+        {
+            isGrounded = Physics2D.Raycast(isGroundedChecker_1.position, -transform.up, groundCheckDistance, groundLayer)
+                || Physics2D.Raycast(isGroundedChecker_2.position, -transform.up, groundCheckDistance, groundLayer);
+        }
     }
 
     public void Jump()
@@ -101,7 +113,6 @@ public class EnemyCombat : MonoBehaviour
     {
         if (canBeAttacked)
         {
-
             //anim.SetBool("isBlocking", false);
             anim.SetBool("hasJustTakenDamage", true);
 
@@ -152,16 +163,37 @@ public class EnemyCombat : MonoBehaviour
         canBlock = true;
     }
 
+    public void JustChangedDirection()
+    {
+        canTurn = false;
+        Invoke("AllowTurn", 0.25f);
+    }
+
+    public void AllowTurn()
+    {
+        canTurn = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Player"))
+        {
+            print("PLAYER");
+            Vector2 directionToPlayer = (transform.position - collision.transform.position).normalized;
+            collision.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 5f, ForceMode2D.Impulse);
+            collision.GetComponent<Rigidbody2D>().AddForce(directionToPlayer * 10f, ForceMode2D.Impulse);
+        }
+    }
+
     void Die()
     {
-        //Debug.Log("Killed");
         isAlive = false;
         // disable enemy
         StopCoroutine(Flash());
-        //GetComponent<SpriteRenderer>().enabled = false;
-        //healthBarObject.SetActive(false);
-        //GetComponent<Collider2D>().enabled = false;
-        //enabled = false;
+
+        //player.KilledEnemy();
+        GameObject.FindWithTag("Player").GetComponent<Player>().KilledEnemy();
+
         gameObject.SetActive(false);
     }
 

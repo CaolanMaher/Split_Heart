@@ -20,17 +20,22 @@ public class SpawnRooms : MonoBehaviour
 
         Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
 
-        // check if a room has been created after the critical path is done
-        if(roomDetection == null && levelGen.generationIsStopped)
+        if (roomDetection != null)
         {
-            // if not, we want to spawn a random room
-            int rand = Random.Range(0, levelGen.rooms.Length);
-            Instantiate(levelGen.rooms[rand], transform.position, Quaternion.identity);
-            //GameObject newRoom = Instantiate(levelGen.rooms[rand], transform.position, Quaternion.identity);
-            //newRoom.GetComponent<BoxCollider2D>().enabled = false;
 
-            // stop this from creating multiple rooms on itself
-            Destroy(gameObject);
+            // check if a room has been created after the critical path is done
+            if (roomDetection == null && levelGen.generationIsStopped)
+            {
+                // if not, we want to spawn a random room
+                int rand = Random.Range(0, levelGen.rooms.Length);
+                Instantiate(levelGen.rooms[rand], transform.position, Quaternion.identity);
+                //GameObject newRoom = Instantiate(levelGen.rooms[rand], transform.position, Quaternion.identity);
+                //newRoom.GetComponent<BoxCollider2D>().enabled = false;
+
+                // stop this from creating multiple rooms on itself
+                Destroy(gameObject);
+            }
+
         }
 
     }

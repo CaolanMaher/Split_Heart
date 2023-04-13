@@ -7,6 +7,10 @@ public class LevelGeneration2 : MonoBehaviour
 {
     public Dynamic_Difficulty_Adjustment dda;
 
+    public Prison_Loading_Screen_Manager loadingScreen;
+
+    public GameObject endRoom;
+
     // array of where start of level can be
     public Transform[] startingPositions;
 
@@ -146,73 +150,152 @@ public class LevelGeneration2 : MonoBehaviour
                 // Get the room we just created before this
                 Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
 
-                // check if the room found has a right opening
-                if (roomDetection.GetComponent<RoomType>().type != 0 
-                    && roomDetection.GetComponent<RoomType>().type != 1 
-                    && roomDetection.GetComponent<RoomType>().type != 2
-                    && roomDetection.GetComponent<RoomType>().type != 3
-                    && roomDetection.GetComponent<RoomType>().type != 6
-                    && roomDetection.GetComponent<RoomType>().type != 7
-                    && roomDetection.GetComponent<RoomType>().type != 11)
+                if (roomDetection != null)
                 {
-                    // if not, get the current rooms type, destroy the room and create one with a right opening and whatever openings it currently has
 
-                    int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
-
-                    criticalPathRooms.Remove(roomDetection.gameObject.transform.parent.gameObject);
-                    roomDetection.GetComponent<RoomType>().RoomDestruction();
-
-                    // check which room type should replace this room
-                    // it can be 9, 10, 12
-                    // if previous room was a left opening room
-                    if(roomDetectionType == 9)
+                    // check if the room found has a right opening
+                    if (roomDetection.GetComponent<RoomType>().type != 0
+                        && roomDetection.GetComponent<RoomType>().type != 1
+                        && roomDetection.GetComponent<RoomType>().type != 2
+                        && roomDetection.GetComponent<RoomType>().type != 3
+                        && roomDetection.GetComponent<RoomType>().type != 6
+                        && roomDetection.GetComponent<RoomType>().type != 7
+                        && roomDetection.GetComponent<RoomType>().type != 11)
                     {
-                        // need to spawn a room with left and right openings
-                        GameObject newRoom_local = Instantiate(rooms[0], transform.position, Quaternion.identity);
-                        criticalPathRooms.Add(newRoom_local);
+                        // if not, get the current rooms type, destroy the room and create one with a right opening and whatever openings it currently has
+
+                        int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
+
+                        criticalPathRooms.Remove(roomDetection.gameObject.transform.parent.gameObject);
+                        roomDetection.GetComponent<RoomType>().RoomDestruction();
+
+                        // check which room type should replace this room
+                        // it can be 9, 10, 12
+                        // if previous room was a left opening room
+                        if (roomDetectionType == 9)
+                        {
+                            // need to spawn a room with left and right openings
+                            GameObject newRoom_local = Instantiate(rooms[0], transform.position, Quaternion.identity);
+                            criticalPathRooms.Add(newRoom_local);
+                        }
+                        // if it was a bottom opening room
+                        else if (roomDetectionType == 10)
+                        {
+                            // need to spawn a room with bottom and right openings
+                            GameObject newRoom_local = Instantiate(rooms[6], transform.position, Quaternion.identity);
+                            criticalPathRooms.Add(newRoom_local);
+                        }
+                        // if it was a top opening room
+                        else if (roomDetectionType == 12)
+                        {
+                            // need to spawn a room with top and right openings
+                            GameObject newRoom_local = Instantiate(rooms[7], transform.position, Quaternion.identity);
+                            criticalPathRooms.Add(newRoom_local);
+                        }
                     }
-                    // if it was a bottom opening room
-                    else if(roomDetectionType == 10)
+
+                    // we are within the maxX so we can move right
+                    Vector2 newPos = new Vector2(transform.position.x + moveAmountX, transform.position.y);
+                    transform.position = newPos;
+
+                    if (transform.position.x == maxX)
                     {
-                        // need to spawn a room with bottom and right openings
-                        GameObject newRoom_local = Instantiate(rooms[6], transform.position, Quaternion.identity);
-                        criticalPathRooms.Add(newRoom_local);
+                        GameObject newRoom = Instantiate(endRoom, transform.position, Quaternion.identity);
+
+                        criticalPathFinished = true;
+
+                        int numberOfBranches = Random.Range(10, criticalPathRooms.Count / 3);
+
+                        CreateBranches(numberOfBranches);
                     }
-                    // if it was a top opening room
-                    else if (roomDetectionType == 12)
+                    else
                     {
-                        // need to spawn a room with top and right openings
-                        GameObject newRoom_local = Instantiate(rooms[7], transform.position, Quaternion.identity);
-                        criticalPathRooms.Add(newRoom_local);
+
+                        // Spawn a room with a left opening
+                        GameObject newRoom = Instantiate(rooms[9], transform.position, Quaternion.identity);
+
+                        criticalPathRooms.Add(newRoom);
+
                     }
-                }
 
-                // we are within the maxX so we can move right
-                Vector2 newPos = new Vector2(transform.position.x + moveAmountX, transform.position.y);
-                transform.position = newPos;
+                    // reset down and up counter
+                    downCounter = 0;
+                    upCounter = 0;
 
-                // Spawn a room with a left opening
-                GameObject newRoom = Instantiate(rooms[9], transform.position, Quaternion.identity);
+                    // set direction to random number between 1 and 4
+                    direction = Random.Range(1, 5);
 
-                criticalPathRooms.Add(newRoom);
+                    if (transform.position.x == maxX)
+                    {
 
-                // reset down and up counter
-                downCounter = 0;
-                upCounter = 0;
+                        //print(transform.position);
 
-                // set direction to random number between 1 and 4
-                direction = Random.Range(1, 5);
+                        //GameObject finalRoom = Instantiate(endRoom, transform.position, Quaternion.identity);
 
-                if(transform.position.x == maxX)
-                {
-                    criticalPathFinished = true;
+                        //criticalPathFinished = true;
 
-                    int numberOfBranches = Random.Range(10, criticalPathRooms.Count / 3);
+                        //int numberOfBranches = Random.Range(10, criticalPathRooms.Count / 3);
 
-                    CreateBranches(numberOfBranches);
-                    
+                        //CreateBranches(numberOfBranches);
+
+                    }
+
                 }
             }
+            /*
+            else if(transform.position.x == maxX)
+            {
+
+                Vector2 positionToRight = new Vector2(transform.position.x + moveAmountX, transform.position.y);
+
+                // Get the room we just created before this
+                //Vector2 positionToLeft = new Vector2(transform.position.x - moveAmountX, transform.position.y);
+                Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
+                int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
+                //print(roomToLeftType);
+
+                //Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
+                //int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
+
+                //criticalPathRooms.Remove(roomDetection.gameObject.transform.parent.gameObject);
+                roomDetection.GetComponent<RoomType>().RoomDestruction();
+
+                // check which room type should replace this room
+                // it can be 9, 10, 12
+                // if previous room was a left opening room
+                if (roomDetectionType == 9)
+                {
+                    // need to spawn a room with left and right openings
+                    GameObject newRoom_local = Instantiate(rooms[0], transform.position, Quaternion.identity);
+                    //criticalPathRooms.Add(newRoom_local);
+                }
+                // if it was a bottom opening room
+                else if (roomDetectionType == 10)
+                {
+                    // need to spawn a room with bottom and right openings
+                    GameObject newRoom_local = Instantiate(rooms[6], transform.position, Quaternion.identity);
+                    //criticalPathRooms.Add(newRoom_local);
+                }
+                // if it was a top opening room
+                else if (roomDetectionType == 12)
+                {
+                    // need to spawn a room with top and right openings
+                    GameObject newRoom_local = Instantiate(rooms[7], transform.position, Quaternion.identity);
+                    //criticalPathRooms.Add(newRoom_local);
+                }
+
+                //Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
+                //roomDetection.GetComponent<RoomType>().RoomDestruction();
+
+                GameObject finalRoom = Instantiate(endRoom, transform.position, Quaternion.identity);
+
+                criticalPathFinished = true;
+
+                int numberOfBranches = Random.Range(10, criticalPathRooms.Count / 3);
+
+                CreateBranches(numberOfBranches);
+            }
+            */
         }
         else if(direction == 3)
         {
@@ -959,5 +1042,6 @@ public class LevelGeneration2 : MonoBehaviour
         dda.SetTotalRoomCount(totalRoomCount);
 
         dda.LevelGenIsCompleted();
+        loadingScreen.FinishedLoading();
     }
 }

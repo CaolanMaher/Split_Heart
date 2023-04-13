@@ -25,9 +25,11 @@ public class BanditBT : MyTree
 
     public static float movementSpeed = 2f;
 
+    public static float runningSpeed = 3.5f;
+
     public static float sightRange = 6f;
 
-    public static float attackRange = 1f;
+    public static float attackRange = 1.5f;
 
     public static float checkNearbyEnemiesDistance = 10f;
 

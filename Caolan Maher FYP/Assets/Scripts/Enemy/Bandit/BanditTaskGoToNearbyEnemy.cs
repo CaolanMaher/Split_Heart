@@ -15,10 +15,13 @@ public class BanditTaskGoToNearbyEnemy : MyNode
 
     private LayerMask _floorLayerMask;
 
+    Vector2 directionToMove;
+    Vector2 directionForRays;
+
     bool isLowerWallDetectorHittingWall = false;
     bool isHigherWallDetectorHittingWall = false;
 
-    float wallCheckDistance = 0.75f;
+    float wallCheckDistance = 1f;
 
     public BanditTaskGoToNearbyEnemy(Transform transform, Transform wallDetector, Transform higherWallDetector, LayerMask floorLayerMask)
     {
@@ -38,29 +41,44 @@ public class BanditTaskGoToNearbyEnemy : MyNode
         if (Vector2.Distance(_transform.position, nearbyEnemy.position) > 1f)
         {
 
-            Debug.Log("GOING TO ENEMY");
+            //Debug.Log("GOING TO ENEMY");
 
             //Vector2 directionToEnemy = (_transform.position - nearbyEnemy.position).normalized;
             //_transform.Translate(directionToEnemy * BanditBT.movementSpeed * Time.deltaTime);
 
-            if (nearbyEnemy.position.x > _transform.position.x)
+            if (nearbyEnemy.position.x > _transform.position.x && enemyCombat.canTurn)
             {
                 _transform.localScale = new Vector3(-1.25f, 1.25f, 1.25f);
-                _transform.Translate(-(Vector2.right) * BanditBT.movementSpeed * Time.deltaTime);
+                //_transform.Translate(-(Vector2.right) * BanditBT.movementSpeed * Time.deltaTime);
 
-                isLowerWallDetectorHittingWall = Physics2D.Raycast(_wallDetector.position, -_transform.right, wallCheckDistance, _floorLayerMask);
-                isHigherWallDetectorHittingWall = Physics2D.Raycast(_higherWallDetector.position, -_transform.right, wallCheckDistance, _floorLayerMask);
+                directionToMove = -(Vector2.right);
+                directionForRays = -_transform.right;
+
+                //isLowerWallDetectorHittingWall = Physics2D.Raycast(_wallDetector.position, -_transform.right, wallCheckDistance, _floorLayerMask);
+                //isHigherWallDetectorHittingWall = Physics2D.Raycast(_higherWallDetector.position, -_transform.right, wallCheckDistance, _floorLayerMask);
 
                 //enemyCombat.Invoke("AllowBlock", 1f);
+
+                enemyCombat.JustChangedDirection();
             }
-            else
+            else if(nearbyEnemy.position.x < _transform.position.x && enemyCombat.canTurn)
             {
                 _transform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
-                _transform.Translate(Vector2.right * BanditBT.movementSpeed * Time.deltaTime);
+                //_transform.Translate(Vector2.right * BanditBT.movementSpeed * Time.deltaTime);
 
-                isLowerWallDetectorHittingWall = Physics2D.Raycast(_wallDetector.position, _transform.right, wallCheckDistance, _floorLayerMask);
-                isHigherWallDetectorHittingWall = Physics2D.Raycast(_higherWallDetector.position, _transform.right, wallCheckDistance, _floorLayerMask);
+                directionToMove = Vector2.right;
+                directionForRays = _transform.right;
+
+                //isLowerWallDetectorHittingWall = Physics2D.Raycast(_wallDetector.position, _transform.right, wallCheckDistance, _floorLayerMask);
+                //isHigherWallDetectorHittingWall = Physics2D.Raycast(_higherWallDetector.position, _transform.right, wallCheckDistance, _floorLayerMask);
+
+                enemyCombat.JustChangedDirection();
             }
+
+            _transform.Translate(directionToMove * BanditBT.runningSpeed * Time.deltaTime);
+
+            isLowerWallDetectorHittingWall = Physics2D.Raycast(_wallDetector.position, directionForRays, wallCheckDistance, _floorLayerMask);
+            isHigherWallDetectorHittingWall = Physics2D.Raycast(_higherWallDetector.position, directionForRays, wallCheckDistance, _floorLayerMask);
 
             //Vector2.MoveTowards(banditTransform.position, target.position, BanditBT.movementSpeed);
             //banditTransform.LookAt(target.position);
