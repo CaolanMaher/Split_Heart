@@ -28,6 +28,25 @@ public class ThugCheckGroundBeneath : MyNode
         Vector2 origin = _floorDetector.position;
         Vector2 rayCastDirection = Vector2.down;
         RaycastHit2D hit = Physics2D.Raycast(origin, rayCastDirection, floorDetectorRange, wallLayerMask);
+
+        /*
+        Transform target = (Transform)GetData("target");
+
+        if (!(target.position.y > _transform.position.y + 0.5) && !(target.position.y < _transform.position.y - 0.5))
+        {
+            if (hit.collider)
+            {
+                state = NodeState.SUCCESS;
+                return state;
+            }
+            else
+            {
+                state = NodeState.FAILURE;
+                return state;
+            }
+        }
+        */
+
         if (hit.collider)
         {
             state = NodeState.SUCCESS;

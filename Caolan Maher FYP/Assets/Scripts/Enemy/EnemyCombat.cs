@@ -114,7 +114,7 @@ public class EnemyCombat : MonoBehaviour
         if (canBeAttacked)
         {
             //anim.SetBool("isBlocking", false);
-            anim.SetBool("hasJustTakenDamage", true);
+            //anim.SetBool("hasJustTakenDamage", true);
 
             //Debug.Log("ATTACKED");
 
@@ -172,6 +172,12 @@ public class EnemyCombat : MonoBehaviour
     public void AllowTurn()
     {
         canTurn = true;
+    }
+
+    // This is called at the end of the block animation
+    public void StopBlock()
+    {
+        canBeAttacked = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

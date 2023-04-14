@@ -32,11 +32,14 @@ public class BanditTaskAttack : MyNode
     public override NodeState Evaluate()
     {
 
-        anim.SetBool("isLightAttacking", true);
-        anim.SetBool("isBlocking", false);
-        anim.SetBool("isRunning", false);
-
         info = anim.GetCurrentAnimatorStateInfo(0);
+
+        if(!info.IsName("Bandit_Light_Attack"))
+        {
+            anim.SetTrigger("attack");
+            //anim.SetBool("isBlocking", false);
+            anim.SetBool("isRunning", false);
+        }
 
         Transform target = (Transform)GetData("target");
 

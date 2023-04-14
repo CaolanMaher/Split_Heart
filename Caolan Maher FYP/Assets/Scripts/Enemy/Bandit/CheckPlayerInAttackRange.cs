@@ -49,8 +49,8 @@ public class CheckPlayerInAttackRange : MyNode
         else
         {
             //Debug.Log("NOT");
-            anim.SetBool("isLightAttacking", false);
-            anim.SetBool("isBlocking", false);
+            //anim.SetBool("isLightAttacking", false);
+            //anim.SetBool("isBlocking", false);
             anim.SetBool("isRunning", true);
 
             //_data.isAttacking = false;

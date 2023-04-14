@@ -9,86 +9,51 @@ public class ThugTaskGoToTarget : MyNode
 
     Transform _transform;
     private EnemyCombat enemyCombat;
-
-    //private Transform _wallDetector;
-    //private Transform _higherWallDetector;
+    Animator _anim;
 
     private int wallLayerMask = 1 << 7;
 
+    AnimatorStateInfo info;
+
     Vector2 directionToMove;
-    //Vector2 directionForRays;
-
-    //bool isLowerWallDetectorHittingWall = false;
-    //bool isHigherWallDetectorHittingWall = false;
-
-    //float wallCheckDistance = 1f;
 
     public ThugTaskGoToTarget(Transform transform)
     {
         _transform = transform;
+        _anim = _transform.GetComponent<Animator>();
         enemyCombat = transform.GetComponent<EnemyCombat>();
-
-        //_wallDetector = wallDetector;
-        //_higherWallDetector = higherWallDetector;
-
-        //_floorLayerMask = floorLayerMask;
     }
 
     public override NodeState Evaluate()
     {
         Transform target = (Transform)GetData("target");
 
+        info = _anim.GetCurrentAnimatorStateInfo(0);
+
         if (Vector2.Distance(_transform.position, target.position) > 1f)
         {
 
-            //Debug.Log("GOING TO ENEMY");
-
-            //Vector2 directionToEnemy = (_transform.position - nearbyEnemy.position).normalized;
-            //_transform.Translate(directionToEnemy * BanditBT.movementSpeed * Time.deltaTime);
-
-            if (target.position.x > _transform.position.x)
+            if (target.position.x > _transform.position.x && enemyCombat.canTurn)
             {
                 _transform.localScale = new Vector3(-1.5f, 1.5f, 1.5f);
-                //_transform.Translate(-(Vector2.right) * BanditBT.movementSpeed * Time.deltaTime);
 
                 directionToMove = -(Vector2.right);
-                //directionForRays = -_transform.right;
-
-                //isLowerWallDetectorHittingWall = Physics2D.Raycast(_wallDetector.position, -_transform.right, wallCheckDistance, _floorLayerMask);
-                //isHigherWallDetectorHittingWall = Physics2D.Raycast(_higherWallDetector.position, -_transform.right, wallCheckDistance, _floorLayerMask);
-
-                //enemyCombat.Invoke("AllowBlock", 1f);
 
                 enemyCombat.JustChangedDirection();
             }
-            else if (target.position.x < _transform.position.x)
+            else if (target.position.x < _transform.position.x && enemyCombat.canTurn)
             {
                 _transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-                //_transform.Translate(Vector2.right * BanditBT.movementSpeed * Time.deltaTime);
 
                 directionToMove = Vector2.right;
-                //directionForRays = _transform.right;
-
-                //isLowerWallDetectorHittingWall = Physics2D.Raycast(_wallDetector.position, _transform.right, wallCheckDistance, _floorLayerMask);
-                //isHigherWallDetectorHittingWall = Physics2D.Raycast(_higherWallDetector.position, _transform.right, wallCheckDistance, _floorLayerMask);
 
                 enemyCombat.JustChangedDirection();
             }
 
-            _transform.Translate(directionToMove * ThugBT.movementSpeed * Time.deltaTime);
-
-            //isLowerWallDetectorHittingWall = Physics2D.Raycast(_wallDetector.position, directionForRays, wallCheckDistance, _floorLayerMask);
-            //isHigherWallDetectorHittingWall = Physics2D.Raycast(_higherWallDetector.position, directionForRays, wallCheckDistance, _floorLayerMask);
-
-            //Vector2.MoveTowards(banditTransform.position, target.position, BanditBT.movementSpeed);
-            //banditTransform.LookAt(target.position);
-
-            // should be grounded, lower wall check should be true, high wall check should be false, target y is greater than enemy y
-            //if (enemyCombat.isGrounded && isLowerWallDetectorHittingWall && !isHigherWallDetectorHittingWall && !enemyCombat.justJumped)
-            //{
-                // Should Jump
-            //    enemyCombat.Jump();
-            //}
+            if (!info.IsName("Thug_Attack"))
+            {
+                _transform.Translate(directionToMove * ThugBT.movementSpeed * Time.deltaTime);
+            }
         }
 
         state = NodeState.RUNNING;

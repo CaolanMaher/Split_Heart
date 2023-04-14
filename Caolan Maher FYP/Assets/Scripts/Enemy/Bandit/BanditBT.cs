@@ -49,7 +49,8 @@ public class BanditBT : MyTree
                 {
                     new Sequence(new List<MyNode>
                     {
-                        new CheckPlayerIsAttacking(transform),
+                        //new CheckPlayerIsAttacking(transform),
+                        new CheckIfShouldBlock(transform),
                         new BanditTaskBlockAttack(transform)
                     }),
 

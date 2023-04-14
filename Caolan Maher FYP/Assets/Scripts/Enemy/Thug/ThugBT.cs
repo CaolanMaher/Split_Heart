@@ -27,7 +27,7 @@ public class ThugBT : MyTree
 
     //public static float runningSpeed = 3.5f;
 
-    public static float sightRange = 4f;
+    public static float sightRange = 6f;
 
     public static float attackRange = 1.5f;
 
@@ -37,43 +37,14 @@ public class ThugBT : MyTree
 
     protected override MyNode SetupTree()
     {
-        //MyNode root = new BanditTaskPatrol(transform, enemyRigidBody, wallDetector, floorDetector, wallLayerMask, healthBarObject);
         MyNode root = new Selector(new List<MyNode>
         {
-            /*
+            
             new Sequence(new List<MyNode>
             {
-                new CheckPlayerInAttackRange(transform),
-
-                new Selector(new List<MyNode>
-                {
-                    new Sequence(new List<MyNode>
-                    {
-                        new CheckPlayerIsAttacking(transform),
-                        new BanditTaskBlockAttack(transform)
-                    }),
-
-                    new BanditTaskAttack(transform, lightAttackPoint, playerLayerMask)
-                })
+                new ThugCheckPlayerInAttackRange(transform),
+                new ThugTaskAttack(transform, attackPoint)
             }),
-
-            new Sequence(new List<MyNode>
-            {
-                new CheckPlayerInSightRange(transform),
-
-                new Selector(new List<MyNode>
-                {
-                    new Sequence(new List<MyNode>
-                    {
-                        new CheckIfNotInGroup(transform, enemyLayerMask),
-                        new CheckEnemiesNearby(transform, enemyLayerMask),
-                        new BanditTaskGoToNearbyEnemy(transform, wallDetector, higherWallDetector, wallLayerMask)
-                    }),
-
-                    new BanditTaskGoToTarget(transform, wallDetector, higherWallDetector, wallLayerMask)
-                })
-            }),
-            */
 
             new Sequence(new List<MyNode>
             {

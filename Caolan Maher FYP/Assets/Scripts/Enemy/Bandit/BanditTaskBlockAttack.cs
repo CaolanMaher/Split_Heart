@@ -27,9 +27,11 @@ public class BanditTaskBlockAttack : MyNode
         //_data.canBeAttacked = false;
         //Debug.Log("Blocked Attack");
 
-        anim.SetBool("isBlocking", true);
-        anim.SetBool("isLightAttacking", false);
-        anim.SetBool("isRunning", false);
+        anim.SetTrigger("block");
+
+        //anim.SetBool("isBlocking", true);
+        //anim.SetBool("isLightAttacking", false);
+        //anim.SetBool("isRunning", false);
 
         /*
         info = anim.GetCurrentAnimatorStateInfo(0);
