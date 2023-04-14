@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelGeneration2 : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class LevelGeneration2 : MonoBehaviour
     public Prison_Loading_Screen_Manager loadingScreen;
 
     public GameObject endRoom;
+
+    public GameObject bossFightHallwayRoom;
+    public GameObject bossFightRoom;
 
     // array of where start of level can be
     public Transform[] startingPositions;
@@ -200,7 +204,28 @@ public class LevelGeneration2 : MonoBehaviour
 
                     if (transform.position.x == maxX)
                     {
-                        GameObject newRoom = Instantiate(endRoom, transform.position, Quaternion.identity);
+
+                        Scene currentScene = SceneManager.GetActiveScene();
+
+                        if (currentScene.name == "Level_2")
+                        {
+                            GameObject newRoom = Instantiate(endRoom, transform.position, Quaternion.identity);
+                        }
+                        else
+                        {
+                            // spawn hallway to boss fight
+                            for (int i = 0; i < 5; i++)
+                            {
+                                Instantiate(bossFightHallwayRoom, transform.position, Quaternion.identity);
+
+                                Vector2 nextPos = new Vector2(transform.position.x + moveAmountX, transform.position.y);
+
+                                transform.position = nextPos;
+                            }
+
+                            // spawn boss fight room
+                            Instantiate(bossFightRoom, transform.position, Quaternion.identity);
+                        }
 
                         criticalPathFinished = true;
 
@@ -224,78 +249,8 @@ public class LevelGeneration2 : MonoBehaviour
 
                     // set direction to random number between 1 and 4
                     direction = Random.Range(1, 5);
-
-                    if (transform.position.x == maxX)
-                    {
-
-                        //print(transform.position);
-
-                        //GameObject finalRoom = Instantiate(endRoom, transform.position, Quaternion.identity);
-
-                        //criticalPathFinished = true;
-
-                        //int numberOfBranches = Random.Range(10, criticalPathRooms.Count / 3);
-
-                        //CreateBranches(numberOfBranches);
-
-                    }
-
                 }
             }
-            /*
-            else if(transform.position.x == maxX)
-            {
-
-                Vector2 positionToRight = new Vector2(transform.position.x + moveAmountX, transform.position.y);
-
-                // Get the room we just created before this
-                //Vector2 positionToLeft = new Vector2(transform.position.x - moveAmountX, transform.position.y);
-                Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
-                int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
-                //print(roomToLeftType);
-
-                //Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
-                //int roomDetectionType = roomDetection.GetComponent<RoomType>().type;
-
-                //criticalPathRooms.Remove(roomDetection.gameObject.transform.parent.gameObject);
-                roomDetection.GetComponent<RoomType>().RoomDestruction();
-
-                // check which room type should replace this room
-                // it can be 9, 10, 12
-                // if previous room was a left opening room
-                if (roomDetectionType == 9)
-                {
-                    // need to spawn a room with left and right openings
-                    GameObject newRoom_local = Instantiate(rooms[0], transform.position, Quaternion.identity);
-                    //criticalPathRooms.Add(newRoom_local);
-                }
-                // if it was a bottom opening room
-                else if (roomDetectionType == 10)
-                {
-                    // need to spawn a room with bottom and right openings
-                    GameObject newRoom_local = Instantiate(rooms[6], transform.position, Quaternion.identity);
-                    //criticalPathRooms.Add(newRoom_local);
-                }
-                // if it was a top opening room
-                else if (roomDetectionType == 12)
-                {
-                    // need to spawn a room with top and right openings
-                    GameObject newRoom_local = Instantiate(rooms[7], transform.position, Quaternion.identity);
-                    //criticalPathRooms.Add(newRoom_local);
-                }
-
-                //Collider2D roomDetection = Physics2D.OverlapCircle(transform.position, 1, roomMask);
-                //roomDetection.GetComponent<RoomType>().RoomDestruction();
-
-                GameObject finalRoom = Instantiate(endRoom, transform.position, Quaternion.identity);
-
-                criticalPathFinished = true;
-
-                int numberOfBranches = Random.Range(10, criticalPathRooms.Count / 3);
-
-                CreateBranches(numberOfBranches);
-            }
-            */
         }
         else if(direction == 3)
         {

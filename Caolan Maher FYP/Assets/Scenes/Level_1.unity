@@ -1416,6 +1416,8 @@ MonoBehaviour:
   dda: {fileID: 570191651}
   loadingScreen: {fileID: 1093171597}
   endRoom: {fileID: 5532934665683726272, guid: 6175b3342f6a0c943aa4c1a2a31754ca, type: 3}
+  bossFightHallwayRoom: {fileID: 5532934665683726272, guid: da9dbc8da6eb74f408968345f9aaf775, type: 3}
+  bossFightRoom: {fileID: 5532934665683726272, guid: 82e4e639987f552419c8a08c72d6a099, type: 3}
   startingPositions:
   - {fileID: 140773500}
   rooms:
