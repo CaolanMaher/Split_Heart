@@ -7,6 +7,18 @@ TagManager:
   - Tilemap
   - Enemy
   - Room
+  - Treznor
+  - Route_From_1
+  - Route_From_2
+  - Route_From_3
+  - Route_From_4
+  - Route_From_5
+  - Treznor_Health_Bar
+  - Treznor_Name
+  - Boss_Doors
+  - GP_Control_1
+  - GP_Control_2
+  - Route_From_GP
   layers:
   - Default
   - TransparentFX
@@ -18,7 +30,7 @@ TagManager:
   - Tilemap
   - Room
   - Test
-  - 
+  - Treznor
   - 
   - 
   - 

@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
     public Transform attackPoint;
     private float attackRange = 0.5f;
     public LayerMask enemyLayers;
+    public LayerMask bossLayer;
     public float attackDamage = 50;
 
     private bool canAttack = true;
@@ -419,6 +420,15 @@ public class Player : MonoBehaviour
         {
             enemy.GetComponent<EnemyCombat>().TakeDamage(attackDamage);
         }
+
+        // Check boss hit
+        Collider2D[] bossHit = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, bossLayer);
+
+        // Damage enemies
+        foreach (Collider2D boss in bossHit)
+        {
+            boss.GetComponent<TreznorBossFight>().TakeDamage(attackDamage);
+        }
     }
 
     // This is called at the end of the attack animation
@@ -494,17 +504,17 @@ public class Player : MonoBehaviour
             currentHealth -= damage;
 
             healthBar.value = currentHealth;
-        }
 
-        if(currentHealth <= 0)
-        {
-            healthBar.value = 0;
-            Die();
-        }
-        else
-        {
-            // flash player
-            StartCoroutine(Flash());
+            if (currentHealth <= 0)
+            {
+                healthBar.value = 0;
+                Die();
+            }
+            else
+            {
+                // flash player
+                StartCoroutine(Flash());
+            }
         }
     }
 

@@ -207,7 +207,7 @@ public class LevelGeneration2 : MonoBehaviour
 
                         Scene currentScene = SceneManager.GetActiveScene();
 
-                        if (currentScene.name == "Level_2")
+                        if (currentScene.name == "Level_1")
                         {
                             GameObject newRoom = Instantiate(endRoom, transform.position, Quaternion.identity);
                         }
