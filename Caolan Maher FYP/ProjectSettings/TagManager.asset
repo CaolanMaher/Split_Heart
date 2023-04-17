@@ -19,6 +19,8 @@ TagManager:
   - GP_Control_1
   - GP_Control_2
   - Route_From_GP
+  - Background_Music
+  - DDA
   layers:
   - Default
   - TransparentFX

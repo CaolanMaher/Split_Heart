@@ -14,9 +14,11 @@ public class BanditTaskAttack : MyNode
     private Transform _transform;
     private Transform _lightAttackPoint;
 
+    EnemyCombat enemyCombat;
+
     private float lightAttackRadius = 0.2f;
 
-    private int attackDamage = 25;
+    private int attackDamage = 15;
 
     private float attackCooldown = 1f;
     private float attackTimer = 0;
@@ -27,6 +29,8 @@ public class BanditTaskAttack : MyNode
         _transform = transform;
         _lightAttackPoint = lightAttackPoint;
         _playerLayerMask = playerLayerMask;
+
+        enemyCombat = _transform.GetComponent<EnemyCombat>();
     }
 
     public override NodeState Evaluate()
@@ -34,7 +38,15 @@ public class BanditTaskAttack : MyNode
 
         info = anim.GetCurrentAnimatorStateInfo(0);
 
-        if(!info.IsName("Bandit_Light_Attack"))
+        /*
+        if (!info.IsName("Bandit_Block"))
+        {
+            Debug.Log("True");
+            enemyCombat.canBeAttacked = true;
+        }
+        */
+
+        if (!info.IsName("Bandit_Light_Attack") && !info.IsName("Bandit_Block"))
         {
             anim.SetTrigger("attack");
             //anim.SetBool("isBlocking", false);
@@ -57,7 +69,7 @@ public class BanditTaskAttack : MyNode
 
             if(player != null)
             {
-                player.GetComponent<Player>().TakeDamage(25);
+                player.GetComponent<Player>().TakeDamage(attackDamage);
             }
 
             /*

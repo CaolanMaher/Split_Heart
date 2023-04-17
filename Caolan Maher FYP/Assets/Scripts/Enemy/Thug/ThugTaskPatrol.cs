@@ -8,6 +8,8 @@ public class ThugTaskPatrol : MyNode
 {
 
     private Rigidbody2D enemyRigidBody;
+    Animator anim;
+    AnimatorStateInfo info;
 
     private Transform transform;
     private int direction = -1;
@@ -34,6 +36,8 @@ public class ThugTaskPatrol : MyNode
         floorDetector = banditFloorDetector;
         wallLayerMask = banditWallMask;
         enemyCombat = transform.GetComponent<EnemyCombat>();
+
+        anim = transform.GetComponent<Animator>();
     }
 
     public override NodeState Evaluate()
@@ -59,17 +63,24 @@ public class ThugTaskPatrol : MyNode
 
     void Movement()
     {
-        if (direction == 1)
+
+        info = anim.GetCurrentAnimatorStateInfo(0);
+
+        if (!info.IsName("Thug_Attack"))
         {
-            isMovingRight = true;
-            transform.localScale = new Vector3(-1.5f, 1.5f, 1.5f);
-            transform.Translate(transform.right * ThugBT.movementSpeed * Time.deltaTime);
-        }
-        else
-        {
-            isMovingRight = false;
-            transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-            transform.Translate((-transform.right) * ThugBT.movementSpeed * Time.deltaTime);
+
+            if (direction == 1)
+            {
+                isMovingRight = true;
+                transform.localScale = new Vector3(-1.5f, 1.5f, 1.5f);
+                transform.Translate(transform.right * ThugBT.movementSpeed * Time.deltaTime);
+            }
+            else
+            {
+                isMovingRight = false;
+                transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                transform.Translate((-transform.right) * ThugBT.movementSpeed * Time.deltaTime);
+            }
         }
     }
 

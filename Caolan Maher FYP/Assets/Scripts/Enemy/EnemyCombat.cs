@@ -8,7 +8,7 @@ public class EnemyCombat : MonoBehaviour
 
     //public BanditData BTData;
 
-    //Player player;
+    GameObject player;
 
     private bool isAlive = true;
 
@@ -52,6 +52,7 @@ public class EnemyCombat : MonoBehaviour
     public bool isGrounded = false;
 
     private Animator anim;
+    AnimatorStateInfo info;
 
     // Start is called before the first frame update
     void Start()
@@ -67,8 +68,6 @@ public class EnemyCombat : MonoBehaviour
         anim = GetComponent<Animator>();
 
         rb = GetComponent<Rigidbody2D>();
-
-        //player = GameObject.FindWithTag("Player").GetComponent<Player>();
     }
 
     private void Update()
@@ -111,7 +110,11 @@ public class EnemyCombat : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (canBeAttacked)
+
+        info = anim.GetCurrentAnimatorStateInfo(0);
+
+        //if (canBeAttacked)
+        if(!info.IsName("Bandit_Block"))
         {
             //anim.SetBool("isBlocking", false);
             //anim.SetBool("hasJustTakenDamage", true);
@@ -135,6 +138,21 @@ public class EnemyCombat : MonoBehaviour
                 // flash enemy
                 StartCoroutine(Flash());
             }
+        }
+        else
+        {
+            //print("Launched Player");
+
+            if(player == null)
+            {
+                player = GameObject.FindGameObjectWithTag("Player");
+            }
+
+            // direction from enemy to player
+            Vector2 directionFromEnemyToPlayer = (player.transform.position - transform.position).normalized;
+
+            // launch player back
+            player.GetComponent<Player>().LaunchBack(directionFromEnemyToPlayer);
         }
     }
 
@@ -177,7 +195,7 @@ public class EnemyCombat : MonoBehaviour
     // This is called at the end of the block animation
     public void StopBlock()
     {
-        canBeAttacked = true;
+        //canBeAttacked = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

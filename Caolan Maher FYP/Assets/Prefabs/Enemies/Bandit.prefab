@@ -196,7 +196,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 362ed3994da1fd341b1ab5707cb9edbc, type: 3}
   m_Color: {r: 0.9827944, g: 1, b: 0, a: 1}
   m_FlipX: 0
@@ -386,7 +386,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 503399942, guid: 2d9d1d6cde7545f449114f9131e21db2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -522,13 +522,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   justJumped: 0
-  playerDetector: {fileID: 0}
   playerMask:
     serializedVersion: 2
     m_Bits: 0
   healthBarValue: {fileID: 3099775650581370661}
   healthBarObject: {fileID: 3099775650581370663}
-  canvas: {fileID: 3099775650161995217}
+  maxHealth: 250
   isAttacking: 0
   canBeAttacked: 1
   canBlock: 1

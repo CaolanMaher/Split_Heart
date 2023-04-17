@@ -99,10 +99,12 @@ public class TreznorBossFight : MonoBehaviour
         // make bullet travel and face direction of Treznor
         if (isFacingRight)
         {
+            newBullet.transform.eulerAngles = new Vector3(0f, 180f, 0f);
             newBullet.GetComponentInChildren<Rigidbody2D>().AddForce(transform.right * shootingForce, ForceMode2D.Impulse);
         }
         else
         {
+            //newBullet.transform.eulerAngles = new Vector3(0f, 180f, 0f);
             newBullet.GetComponentInChildren<Rigidbody2D>().AddForce(-(transform.right) * shootingForce, ForceMode2D.Impulse);
         }
 
@@ -115,7 +117,7 @@ public class TreznorBossFight : MonoBehaviour
         GameObject newBullet = Instantiate(bullet, attackPointDown.position, Quaternion.identity);
 
         // make bullet travel and face down
-        //newBullet.transform.LookAt(Vector2.down);
+        newBullet.transform.eulerAngles = new Vector3(0f, 0f, 90f);
         newBullet.GetComponentInChildren<Rigidbody2D>().AddForce(Vector2.down * shootingForce, ForceMode2D.Impulse);
     }
 

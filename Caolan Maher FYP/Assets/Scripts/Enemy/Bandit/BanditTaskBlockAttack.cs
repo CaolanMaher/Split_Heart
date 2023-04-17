@@ -28,8 +28,8 @@ public class BanditTaskBlockAttack : MyNode
         //Debug.Log("Blocked Attack");
 
         anim.SetTrigger("block");
-
         //anim.SetBool("isBlocking", true);
+
         //anim.SetBool("isLightAttacking", false);
         //anim.SetBool("isRunning", false);
 

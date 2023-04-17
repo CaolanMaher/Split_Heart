@@ -29,11 +29,16 @@ public class ThugCheckGroundBeneath : MyNode
         Vector2 rayCastDirection = Vector2.down;
         RaycastHit2D hit = Physics2D.Raycast(origin, rayCastDirection, floorDetectorRange, wallLayerMask);
 
-        /*
+        
         Transform target = (Transform)GetData("target");
 
-        if (!(target.position.y > _transform.position.y + 0.5) && !(target.position.y < _transform.position.y - 0.5))
+        //Debug.Log(target.position.y + " " + _transform.position.y);
+
+        if (target.position.y < _transform.position.y + 0.5 && target.position.y > _transform.position.y - 0.5)
         {
+
+            //Debug.Log("At Right Y Level");
+
             if (hit.collider)
             {
                 state = NodeState.SUCCESS;
@@ -45,8 +50,13 @@ public class ThugCheckGroundBeneath : MyNode
                 return state;
             }
         }
-        */
+        else
+        {
+            state = NodeState.FAILURE;
+            return state;
+        }
 
+        /*
         if (hit.collider)
         {
             state = NodeState.SUCCESS;
@@ -57,5 +67,6 @@ public class ThugCheckGroundBeneath : MyNode
             state = NodeState.FAILURE;
             return state;
         }
+        */
     }
 }

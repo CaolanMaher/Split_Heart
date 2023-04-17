@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
@@ -22,7 +23,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private bool isAttacking = false;
 
-    private float maxHealth = 100;
+    private float maxHealth = 150;
     [SerializeField] private float currentHealth;
     private bool canBeHit = true;
 
@@ -30,6 +31,8 @@ public class Player : MonoBehaviour
     private float hurtTimer = 0;
 
     private int flashCooldown = 1;
+
+    public float totalDamageTaken;
 
     // Attacking
 
@@ -61,7 +64,7 @@ public class Player : MonoBehaviour
 
     private bool canMove = true;
 
-    //private bool takeUserMoveInput = true;
+    private bool takeUserMoveInput = true;
 
     // Ground Detection
 
@@ -114,21 +117,46 @@ public class Player : MonoBehaviour
     public Slider healthBar;
     public Slider furyBar;
 
+    // Music & SFX
+
+    GameObject backgroundMusic;
+
     // Start is called before the first frame update
     void Start()
     {
         playerRigidbody = GetComponent<Rigidbody2D>();
         playerAnimator = GetComponent<Animator>();
 
-        currentHealth = maxHealth;
-        healthBar.value = maxHealth;
-        healthBar.maxValue = maxHealth;
-        healthBar.minValue = 0;
+        backgroundMusic = GameObject.FindGameObjectWithTag("Background_Music");
 
-        currentFuryCharge = 0f;
-        furyBar.value = currentFuryCharge;
-        furyBar.maxValue = maxFuryCharge;
-        furyBar.minValue = 0;
+        Scene currentScene = SceneManager.GetActiveScene();
+
+        if (currentScene.name == "Level_2")
+        {
+            maxHealth = PlayerPrefs.GetFloat("MaxHealth");
+            currentHealth = PlayerPrefs.GetFloat("CurrentHealth");
+            currentFuryCharge = PlayerPrefs.GetFloat("CurrentFuryCharge");
+
+            healthBar.maxValue = maxHealth;
+            healthBar.minValue = 0;
+            healthBar.value = currentHealth;
+
+            furyBar.maxValue = maxFuryCharge;
+            furyBar.minValue = 0;
+            furyBar.value = currentFuryCharge;
+        }
+        else
+        {
+            currentHealth = maxHealth;
+            healthBar.maxValue = maxHealth;
+            healthBar.minValue = 0;
+            healthBar.value = maxHealth;
+
+            currentFuryCharge = 0f;
+            furyBar.maxValue = maxFuryCharge;
+            furyBar.minValue = 0;
+            furyBar.value = currentFuryCharge;
+        }
     }
 
     // Update is called once per frame
@@ -188,22 +216,26 @@ public class Player : MonoBehaviour
 
         if(isFurySide)
         {
-            furyBar.value -= Time.deltaTime;
+            currentFuryCharge -= Time.deltaTime;
+            furyBar.value = currentFuryCharge;
 
             if(furyBar.value <= 0 && !canClimbLedge && isGrounded)
             {
-                furyBar.value = 0;
+                currentFuryCharge = 0;
+                furyBar.value = currentFuryCharge;
                 TransformToNormal();
             }
         }
 
         if(!isFurySide && !canTransform)
         {
-            furyBar.value += Time.deltaTime * 0.1f;
+            currentFuryCharge += Time.deltaTime * 0.1f;
+            furyBar.value = currentFuryCharge;
 
-            if (furyBar.value >= furyBar.maxValue)
+            if (currentFuryCharge >= furyBar.maxValue)
             {
-                furyBar.value = furyBar.maxValue;
+                currentFuryCharge = maxFuryCharge;
+                furyBar.value = currentFuryCharge;
                 canTransform = true;
             }
         }
@@ -288,7 +320,7 @@ public class Player : MonoBehaviour
     void MovementCalculations()
     {
 
-        if (canMove)
+        if (canMove && takeUserMoveInput)
         {
 
             float dirX = Input.GetAxis("Horizontal");
@@ -337,11 +369,17 @@ public class Player : MonoBehaviour
 
     void MovePlayer()
     {
+
+        //if(isAttacking && playerAnimator.GetBool("isInAir"))
+        //{
+        //    takeUserMoveInput = true;
+        //}
+
         if (canMove)
         {
             playerRigidbody.velocity = new Vector2(moveHorizontal * movementSpeed * Time.deltaTime, playerRigidbody.velocity.y);
         }
-        else
+        else if (!canMove && !takeUserMoveInput)
         {
             playerRigidbody.velocity = new Vector2(0, playerRigidbody.velocity.y);
         }
@@ -369,7 +407,7 @@ public class Player : MonoBehaviour
 
         //canMove = false;
 
-        //takeUserMoveInput = false;
+        takeUserMoveInput = false;
 
         if (isGrounded)
         {
@@ -379,6 +417,7 @@ public class Player : MonoBehaviour
         {
             // cut current momentum by half
             //playerRigidbody.velocity = new Vector2(playerRigidbody.velocity.x / 2, playerRigidbody.velocity.y / 2);
+            takeUserMoveInput = true;
         }
 
         if ((playerStateInfo.IsName("Player_Attack_Move_1") || playerStateInfo.IsName("Player_Attack_Move_1_Fury")) && playerStateInfo.normalizedTime % 1 > 0.35)
@@ -442,7 +481,7 @@ public class Player : MonoBehaviour
     public void ResetMoveBool()
     {
         canMove = true;
-        //takeUserMoveInput = true;
+        takeUserMoveInput = true;
     }
 
     // This is called at the end of both transformation animations
@@ -462,6 +501,7 @@ public class Player : MonoBehaviour
         isFurySide = true;
 
         canMove = false;
+        takeUserMoveInput = false;
         canAttack = false;
 
         //canTransform = false;
@@ -485,6 +525,7 @@ public class Player : MonoBehaviour
         isFurySide = false;
 
         canMove = false;
+        takeUserMoveInput = false;
         canAttack = false;
 
         // reset stats and timers
@@ -515,7 +556,30 @@ public class Player : MonoBehaviour
                 // flash player
                 StartCoroutine(Flash());
             }
+
+            totalDamageTaken += damage;
         }
+    }
+
+    public void AddHealth(int health)
+    {
+        currentHealth += health;
+
+        if(currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+
+        healthBar.value = currentHealth;
+    }
+
+    public void LaunchBack(Vector2 directionFromEnemyToPlayer)
+    {
+
+        takeUserMoveInput = true;
+
+        playerRigidbody.AddForce(Vector2.up * 10, ForceMode2D.Impulse);
+        playerRigidbody.AddForce(directionFromEnemyToPlayer * 10, ForceMode2D.Impulse);
     }
 
     IEnumerator Flash()
@@ -539,9 +603,11 @@ public class Player : MonoBehaviour
 
     public void KilledEnemy()
     {
-        if(furyBar.value < furyBar.maxValue)
+        
+        if(currentFuryCharge < maxFuryCharge)
         {
-            furyBar.value += furyBar.maxValue / 10; 
+            currentFuryCharge += maxFuryCharge / 10;
+            furyBar.value = currentFuryCharge;
         }
     }
 
@@ -551,12 +617,31 @@ public class Player : MonoBehaviour
         GetComponent<SpriteRenderer>().enabled = false;
         enabled = false;
 
+        backgroundMusic.GetComponent<BackgroundMusicFade>().FadeOut();
+
         playManager.PlayerDied();
     }
 
     public bool GetIsAttacking()
     {
         return isAttacking;
+    }
+
+    // Getters
+
+    public float GetMaxHealth()
+    {
+        return maxHealth;
+    }
+
+    public float GetCurrentHealth()
+    {
+        return currentHealth;
+    }
+
+    public float GetCurrentFuryCharge()
+    {
+        return currentFuryCharge;
     }
 
     private void OnDrawGizmosSelected()

@@ -9,7 +9,7 @@ public class TreznorBullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Tilemap"))
+        if(collision.CompareTag("Tilemap") || collision.CompareTag("Boss_Doors"))
         {
             Destroy(gameObject.transform.parent.gameObject);
         }
