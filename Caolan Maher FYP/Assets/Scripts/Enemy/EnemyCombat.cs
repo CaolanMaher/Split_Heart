@@ -19,6 +19,8 @@ public class EnemyCombat : MonoBehaviour
 
     [SerializeField] private LayerMask groundLayer;
 
+    bool isFacingRight = false;
+
     Rigidbody2D rb;
 
     private float jumpForce = 55f;
@@ -54,6 +56,8 @@ public class EnemyCombat : MonoBehaviour
     private Animator anim;
     AnimatorStateInfo info;
 
+    AudioSource audioSource;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -68,17 +72,22 @@ public class EnemyCombat : MonoBehaviour
         anim = GetComponent<Animator>();
 
         rb = GetComponent<Rigidbody2D>();
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
     {
+        // for bandits only
         if(transform.localScale.x < 0)
         {
             healthBarObject.transform.localScale = new Vector3(-1, 1, 1);
+            isFacingRight = true;
         }
         else
         {
             healthBarObject.transform.localScale = new Vector3(1, 1, 1);
+            isFacingRight = false;
         }
 
         CheckIsGrounded();
@@ -90,6 +99,15 @@ public class EnemyCombat : MonoBehaviour
         {
             justJumped = false;
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+
+            if(isFacingRight)
+            {
+                rb.AddForce(transform.right * 2.5f, ForceMode2D.Impulse);
+            }
+            else
+            {
+                rb.AddForce(-(transform.right) * 2.5f, ForceMode2D.Impulse);
+            }
         }
     }
 
@@ -113,13 +131,10 @@ public class EnemyCombat : MonoBehaviour
 
         info = anim.GetCurrentAnimatorStateInfo(0);
 
-        //if (canBeAttacked)
         if(!info.IsName("Bandit_Block"))
         {
-            //anim.SetBool("isBlocking", false);
-            //anim.SetBool("hasJustTakenDamage", true);
 
-            //Debug.Log("ATTACKED");
+            audioSource.Play();
 
             // show health bar
             healthBarObject.SetActive(true);
@@ -198,6 +213,7 @@ public class EnemyCombat : MonoBehaviour
         //canBeAttacked = true;
     }
 
+    /*
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Player"))
@@ -208,6 +224,7 @@ public class EnemyCombat : MonoBehaviour
             collision.GetComponent<Rigidbody2D>().AddForce(directionToPlayer * 10f, ForceMode2D.Impulse);
         }
     }
+    */
 
     void Die()
     {

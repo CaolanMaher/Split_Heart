@@ -40,6 +40,11 @@ public class FollowRoute : MonoBehaviour
 
     Rigidbody2D rb;
 
+    AudioSource audioSource;
+    [SerializeField] AudioClip groundPoundStartSound;
+
+    GameObject dangerIcon;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -62,6 +67,10 @@ public class FollowRoute : MonoBehaviour
         bossFight = GetComponent<TreznorBossFight>();
 
         anim = GetComponent<Animator>();
+
+        audioSource = GetComponent<AudioSource>();
+
+        dangerIcon = GameObject.FindGameObjectWithTag("DangerIcon");
     }
 
     // Update is called once per frame
@@ -190,6 +199,17 @@ public class FollowRoute : MonoBehaviour
 
                         // because we are not starting from a pre-defined point
                         startingPoint = 0;
+
+                        audioSource.clip = groundPoundStartSound;
+                        audioSource.Play();
+
+                        dangerIcon.GetComponent<SpriteRenderer>().enabled = true;
+                        dangerIcon.transform.position = new Vector2(hit.point.x, hit.point.y + 0.75f);
+
+                        yield return new WaitForSeconds(0.5f);
+
+                        dangerIcon.GetComponent<SpriteRenderer>().enabled = false;
+
                         break;
                     }
                 }

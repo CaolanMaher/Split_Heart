@@ -51,21 +51,27 @@ public class BanditTaskGoToTarget : MyNode
             // Go Towards Target
             if(target.position.x > banditTransform.position.x && enemyCombat.canTurn)
             {
-                banditTransform.localScale = new Vector3(-1.25f, 1.25f, 1.25f);
+                if (!info.IsName("Bandit_Light_Attack"))
+                {
+                    banditTransform.localScale = new Vector3(-1.25f, 1.25f, 1.25f);
 
-                directionToMove = -(Vector2.right);
-                directionForRays = -banditTransform.right;
+                    directionToMove = -(Vector2.right);
+                    directionForRays = -banditTransform.right;
 
-                enemyCombat.JustChangedDirection();
+                    enemyCombat.JustChangedDirection();
+                }
             }
             else if(target.position.x < banditTransform.position.x && enemyCombat.canTurn)
             {
-                banditTransform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
+                if (!info.IsName("Bandit_Light_Attack"))
+                {
+                    banditTransform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
 
-                directionToMove = Vector2.right;
-                directionForRays = banditTransform.right;
+                    directionToMove = Vector2.right;
+                    directionForRays = banditTransform.right;
 
-                enemyCombat.JustChangedDirection();
+                    enemyCombat.JustChangedDirection();
+                }
             }
 
             if (info.IsName("Bandit_Run"))

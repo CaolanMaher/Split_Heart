@@ -35,19 +35,25 @@ public class ThugTaskGoToTarget : MyNode
 
             if (target.position.x > _transform.position.x && enemyCombat.canTurn)
             {
-                _transform.localScale = new Vector3(-1.5f, 1.5f, 1.5f);
+                if (!info.IsName("Thug_Attack"))
+                {
+                    _transform.localScale = new Vector3(-1.5f, 1.5f, 1.5f);
 
-                directionToMove = -(Vector2.right);
+                    directionToMove = -(Vector2.right);
 
-                enemyCombat.JustChangedDirection();
+                    enemyCombat.JustChangedDirection();
+                }
             }
             else if (target.position.x < _transform.position.x && enemyCombat.canTurn)
             {
-                _transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                if (!info.IsName("Thug_Attack"))
+                {
+                    _transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 
-                directionToMove = Vector2.right;
+                    directionToMove = Vector2.right;
 
-                enemyCombat.JustChangedDirection();
+                    enemyCombat.JustChangedDirection();
+                }
             }
 
             if (!info.IsName("Thug_Attack"))

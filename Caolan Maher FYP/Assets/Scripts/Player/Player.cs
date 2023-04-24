@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     // Attacking
 
     public Transform attackPoint;
-    private float attackRange = 0.5f;
+    private float attackRange = 1f;
     public LayerMask enemyLayers;
     public LayerMask bossLayer;
     public float attackDamage = 50;
@@ -62,9 +62,9 @@ public class Player : MonoBehaviour
 
     private bool canTurn = true;
 
-    private bool canMove = true;
+    public bool canMove = true;
 
-    private bool takeUserMoveInput = true;
+    public bool takeUserMoveInput = true;
 
     // Ground Detection
 
@@ -116,10 +116,12 @@ public class Player : MonoBehaviour
 
     public Slider healthBar;
     public Slider furyBar;
+    public GameObject xButton;
 
     // Music & SFX
 
     GameObject backgroundMusic;
+    AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
@@ -128,6 +130,10 @@ public class Player : MonoBehaviour
         playerAnimator = GetComponent<Animator>();
 
         backgroundMusic = GameObject.FindGameObjectWithTag("Background_Music");
+
+        xButton.SetActive(false);
+
+        audioSource = GetComponent<AudioSource>();
 
         Scene currentScene = SceneManager.GetActiveScene();
 
@@ -237,6 +243,7 @@ public class Player : MonoBehaviour
                 currentFuryCharge = maxFuryCharge;
                 furyBar.value = currentFuryCharge;
                 canTransform = true;
+                xButton.SetActive(true);
             }
         }
     }
@@ -253,6 +260,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X) && canTransform && !canClimbLedge && isGrounded && furyBar.value >= furyBar.maxValue)
         {
             canTransform = false;
+            xButton.SetActive(false);
             TransformToFury();
         }
     }
@@ -280,6 +288,8 @@ public class Player : MonoBehaviour
     // This method is called at the end of the climbing animation
     public void FinishLedgeClimb()
     {
+        canBeHit = true;
+
         canClimbLedge = false;
         transform.position = ledgePosition2;
 
@@ -295,6 +305,7 @@ public class Player : MonoBehaviour
     {
         if(ledgeDetected && !canClimbLedge)
         {
+            canBeHit = false;
             canClimbLedge = true;
 
             if(isFacingRight)
@@ -488,11 +499,13 @@ public class Player : MonoBehaviour
     public void ResetTransformBool()
     {
         isTransforming = false;
+        canBeHit = true;
         ResetMoveBool();
     }
 
     public void TransformToFury()
     {
+        canBeHit = false;
         isTransforming = true;
 
         playerAnimator.SetTrigger("transformToFury");
@@ -515,6 +528,7 @@ public class Player : MonoBehaviour
 
     public void TransformToNormal()
     {
+        canBeHit = false;
         isTransforming = true;
 
         //print("BACK TO NORMAL");
@@ -540,6 +554,8 @@ public class Player : MonoBehaviour
 
         if(canBeHit)
         {
+            audioSource.Play();
+
             canBeHit = false;
 
             currentHealth -= damage;
@@ -603,12 +619,30 @@ public class Player : MonoBehaviour
 
     public void KilledEnemy()
     {
+
+        if(isFurySide && currentHealth < maxHealth)
+        {
+            AddHealth(15);
+        }
         
         if(currentFuryCharge < maxFuryCharge)
         {
             currentFuryCharge += maxFuryCharge / 10;
             furyBar.value = currentFuryCharge;
         }
+    }
+
+    public void BossFighIntroStarted()
+    {
+        canMove = false;
+        takeUserMoveInput = false;
+        playerAnimator.SetBool("isRunning", false);
+    }
+
+    public void BossFighIntroEnded()
+    {
+        canMove = true;
+        takeUserMoveInput = true;
     }
 
     void Die()

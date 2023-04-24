@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,10 +35,15 @@ public class TreznorBossFight : MonoBehaviour
     public GameObject healthBarObject;
     public Slider healthBarValue;
     public GameObject bossName;
-    private float maxHealth = 2000;
-    private float currentHealth = 2000;
+    private float maxHealth = 3000;
+    private float currentHealth = 3000;
     private bool isAlive = true;
     float flashCooldown = 0.5f;
+
+    AudioSource audioSource;
+    [SerializeField] AudioClip hitSound;
+
+    GameObject cinemachineCamera;
 
     // Attacks
     // Shoot 3 bullets in a spread pattern
@@ -59,6 +65,10 @@ public class TreznorBossFight : MonoBehaviour
 
         healthBarObject.SetActive(false);
         bossName.SetActive(false);
+
+        audioSource = GetComponent<AudioSource>();
+
+        cinemachineCamera = GameObject.FindGameObjectWithTag("CinemachineCamera");
     }
 
     // Update is called once per frame
@@ -130,27 +140,52 @@ public class TreznorBossFight : MonoBehaviour
     {
         if (!bossFightStarted)
         {
-
-            bossFightStarted = true;
-
-            player = GameObject.FindGameObjectWithTag("Player");
-
-            healthBarObject.SetActive(true);
-            bossName.SetActive(true);
-            healthBarValue.maxValue = maxHealth;
-            healthBarValue.minValue = 0;
-            healthBarValue.value = maxHealth;
-            currentHealth = maxHealth;
-
-            //doors = GameObject.FindGameObjectWithTag("Boss_Doors");
-
-            doors.SetActive(true);
-
+            StartCoroutine(BossFightIntro());
         }
+    }
+
+    IEnumerator BossFightIntro()
+    {
+        player = GameObject.FindGameObjectWithTag("Player");
+        player.GetComponent<Player>().BossFighIntroStarted();
+
+        doors.SetActive(true);
+
+        yield return new WaitForSeconds(1f);
+
+        // put camera on Treznor
+        cinemachineCamera.GetComponent<CinemachineVirtualCamera>().Follow = transform;
+
+        yield return new WaitForSeconds(2f);
+
+        // show name
+        bossName.SetActive(true);
+
+        yield return new WaitForSeconds(2f);
+
+        // put camera on Player
+        cinemachineCamera.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
+
+        player.GetComponent<Player>().BossFighIntroEnded();
+
+        bossName.SetActive(false);
+
+        bossFightStarted = true;
+
+        healthBarObject.SetActive(true);
+        healthBarValue.maxValue = maxHealth;
+        healthBarValue.minValue = 0;
+        healthBarValue.value = maxHealth;
+        currentHealth = maxHealth;
+
+        //doors = GameObject.FindGameObjectWithTag("Boss_Doors");
     }
 
     public void TakeDamage(float amount)
     {
+        audioSource.clip = hitSound;
+        audioSource.Play();
+
         currentHealth -= amount;
 
         healthBarValue.value = currentHealth;

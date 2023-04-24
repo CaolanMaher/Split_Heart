@@ -44,11 +44,10 @@ public class BackgroundMusicFade : MonoBehaviour
     {
         float currentTime = 0;
         float start = audioSource.volume;
-        while (currentTime < duration)
+        while (currentTime < 2f)
         {
-            print(currentTime);
             currentTime += Time.deltaTime;
-            audioSource.volume = Mathf.Lerp(start, 0, currentTime / duration);
+            audioSource.volume = Mathf.Lerp(start, 0, currentTime / 2f);
             yield return null;
         }
         yield break;
@@ -56,16 +55,16 @@ public class BackgroundMusicFade : MonoBehaviour
 
     public void StartBossFight()
     {
-        //StartCoroutine(StartFadeOut());
+        StartCoroutine(BossFightMusic());
+    }
 
-        //audioSource.clip = bossclip;
+    IEnumerator BossFightMusic()
+    {
+        StartCoroutine(StartFadeOut());
 
-        //StartCoroutine(StartFade());
-
-        audioSource.Stop();
+        yield return new WaitForSeconds(2f);
 
         audioSource.clip = bossclip;
-
         audioSource.Play();
 
         StartCoroutine(StartFade());

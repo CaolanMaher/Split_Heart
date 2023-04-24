@@ -21,6 +21,8 @@ TagManager:
   - Route_From_GP
   - Background_Music
   - DDA
+  - DangerIcon
+  - CinemachineCamera
   layers:
   - Default
   - TransparentFX

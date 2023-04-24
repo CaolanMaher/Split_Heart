@@ -155,6 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duration: 5
   targetVolume: 0.25
+  bossclip: {fileID: 0}
 --- !u!82 &357431324
 AudioSource:
   m_ObjectHideFlags: 0
