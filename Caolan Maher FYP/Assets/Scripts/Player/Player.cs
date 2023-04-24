@@ -150,6 +150,8 @@ public class Player : MonoBehaviour
             furyBar.maxValue = maxFuryCharge;
             furyBar.minValue = 0;
             furyBar.value = currentFuryCharge;
+
+            PlayerPrefs.SetInt("Level", 2);
         }
         else
         {
@@ -162,6 +164,8 @@ public class Player : MonoBehaviour
             furyBar.maxValue = maxFuryCharge;
             furyBar.minValue = 0;
             furyBar.value = currentFuryCharge;
+
+            PlayerPrefs.SetInt("Level", 1);
         }
     }
 

@@ -8,6 +8,7 @@ public class PlayManager : MonoBehaviour
 
     public GameObject pauseMenu;
     public GameObject deadMenu;
+    public GameObject optionsMenu;
 
     bool gameIsPaused = false;
 
@@ -18,6 +19,7 @@ public class PlayManager : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         deadMenu.SetActive(false);
+        optionsMenu.SetActive(false);
 
         Time.timeScale = 1;
     }
@@ -29,7 +31,7 @@ public class PlayManager : MonoBehaviour
         {
             PauseGame();
         }
-        else if(Input.GetKeyDown(KeyCode.Escape) && gameIsPaused && playerAlive)
+        else if(Input.GetKeyDown(KeyCode.Escape) && gameIsPaused && playerAlive && pauseMenu.activeSelf)
         {
             ResumeGame();
         }
@@ -49,6 +51,18 @@ public class PlayManager : MonoBehaviour
         gameIsPaused = false;
         pauseMenu.SetActive(false);
         Time.timeScale = 1;
+    }
+
+    public void ShowPauseMenu()
+    {
+        pauseMenu.SetActive(true);
+        optionsMenu.SetActive(false);
+    }
+
+    public void ShowOptionsMenu()
+    {
+        pauseMenu.SetActive(false);
+        optionsMenu.SetActive(true);
     }
 
     public void PlayerDied()
