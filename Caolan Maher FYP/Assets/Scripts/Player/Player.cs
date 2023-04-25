@@ -25,14 +25,16 @@ public class Player : MonoBehaviour
 
     private float maxHealth = 150;
     [SerializeField] private float currentHealth;
-    private bool canBeHit = true;
+    [SerializeField] private bool canBeHit = true;
 
-    private float hurtCooldown = 0.75f;
-    private float hurtTimer = 0;
+    [SerializeField] private float hurtCooldown = 1f;
+    [SerializeField] private float hurtTimer = 0;
 
     private int flashCooldown = 1;
 
     public float totalDamageTaken;
+
+    public float takeDamageMultiplier = 1f;
 
     // Attacking
 
@@ -293,6 +295,7 @@ public class Player : MonoBehaviour
     public void FinishLedgeClimb()
     {
         canBeHit = true;
+        hurtTimer = 0;
 
         canClimbLedge = false;
         transform.position = ledgePosition2;
@@ -451,16 +454,6 @@ public class Player : MonoBehaviour
             playerAnimator.SetTrigger("attack");
         }
 
-        /*
-        // Check nearby enemies
-        Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-
-        // Damage enemies
-        foreach(Collider2D enemy in enemiesHit)
-        {
-            enemy.GetComponent<EnemyCombat>().TakeDamage(attackDamage);
-        }
-        */
     }
 
     // This is called during each attack animation
@@ -504,6 +497,7 @@ public class Player : MonoBehaviour
     {
         isTransforming = false;
         canBeHit = true;
+        hurtTimer = 0;
         ResetMoveBool();
     }
 
@@ -562,7 +556,7 @@ public class Player : MonoBehaviour
 
             canBeHit = false;
 
-            currentHealth -= damage;
+            currentHealth -= Mathf.Floor(damage * takeDamageMultiplier);
 
             healthBar.value = currentHealth;
 
@@ -581,7 +575,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void AddHealth(int health)
+    public void AddHealth(float health)
     {
         currentHealth += health;
 

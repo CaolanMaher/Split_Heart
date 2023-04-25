@@ -36,7 +36,7 @@ public class FollowRoute : MonoBehaviour
     private bool shouldShootWhileJumping;
 
     [SerializeField] bool shouldCheckForGroundPound;
-    bool justGroundPounded;
+    public bool justGroundPounded;
 
     Rigidbody2D rb;
 
@@ -248,6 +248,7 @@ public class FollowRoute : MonoBehaviour
         shouldJump = true;
     }
 
+    /*
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Tilemap") && justGroundPounded)
@@ -256,7 +257,13 @@ public class FollowRoute : MonoBehaviour
         }
         else if(collision.CompareTag("Player") && justGroundPounded)
         {
-            collision.GetComponent<Player>().TakeDamage(20);
+            collision.GetComponent<Player>().TakeDamage(30);
         }
+    }
+    */
+
+    public Animator GetAnimator()
+    {
+        return anim;
     }
 }

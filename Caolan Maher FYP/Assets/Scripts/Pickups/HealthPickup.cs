@@ -5,7 +5,23 @@ using UnityEngine;
 public class HealthPickup : MonoBehaviour
 {
 
-    int health = 30;
+    [SerializeField] float health = 30;
+
+    Dynamic_Difficulty_Adjustment dda;
+
+    private void Start()
+    {
+        dda = GameObject.FindGameObjectWithTag("DDA").GetComponent<Dynamic_Difficulty_Adjustment>();
+
+        if(dda.GetPlayerScore() >= 750)
+        {
+            health = health / 1.15f;
+        }
+        else if(dda.GetPlayerScore() <= 250)
+        {
+            health = health * 1.15f;
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

@@ -35,7 +35,24 @@ public class Dynamic_Difficulty_Adjustment : MonoBehaviour
 
         if(currentScene.name == "Level_2")
         {
+            PlayerPrefs.SetFloat("PlayerScore", 900);
             playerScore = PlayerPrefs.GetFloat("PlayerScore");
+
+            player = GameObject.FindGameObjectWithTag("Player");
+
+            // player is playing well
+            if (playerScore >= 750)
+            {
+                player.GetComponent<Player>().takeDamageMultiplier = 1.15f;
+            }
+            else if(playerScore <= 250)
+            {
+                player.GetComponent<Player>().takeDamageMultiplier = 0.85f;
+            }
+            else if(playerScore > 250 && playerScore < 750)
+            {
+                player.GetComponent<Player>().takeDamageMultiplier = 1f;
+            }
         }
         else
         {
@@ -78,8 +95,8 @@ public class Dynamic_Difficulty_Adjustment : MonoBehaviour
         // for every enemy killed add 10 to the player's score
         playerScore += killedEnemies * 10;
 
-        // for every damage point taken remove 0.25 from the player's score
-        playerScore -= player.GetComponent<Player>().totalDamageTaken * 0.25f;
+        // for every damage point taken remove 1.5 from the player's score
+        playerScore -= player.GetComponent<Player>().totalDamageTaken * 1.5f;
 
         // get the time difference in estimation and actual level finish
         float timeDifferenceToCompleteLevel = timeToCompleteLevelEstimation - timeInLevelSoFar;

@@ -5,7 +5,7 @@ using UnityEngine;
 public class TreznorBullet : MonoBehaviour
 {
 
-    private int damage = 10;
+    private int damage = 15;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

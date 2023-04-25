@@ -13,6 +13,12 @@ public class Prison_Loading_Screen_Manager : MonoBehaviour
     void Start()
     {
         loadingScreen.SetActive(true);
+        Invoke("HidePlayer", 0.25f);
+        //player.SetActive(false);
+    }
+
+    void HidePlayer()
+    {
         player.SetActive(false);
     }
 

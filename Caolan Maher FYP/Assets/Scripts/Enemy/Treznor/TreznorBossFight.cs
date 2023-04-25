@@ -35,8 +35,8 @@ public class TreznorBossFight : MonoBehaviour
     public GameObject healthBarObject;
     public Slider healthBarValue;
     public GameObject bossName;
-    private float maxHealth = 3000;
-    private float currentHealth = 3000;
+    private float maxHealth = 6000;
+    private float currentHealth = 6000;
     private bool isAlive = true;
     float flashCooldown = 0.5f;
 

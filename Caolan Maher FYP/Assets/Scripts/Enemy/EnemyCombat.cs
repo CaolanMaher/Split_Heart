@@ -102,11 +102,11 @@ public class EnemyCombat : MonoBehaviour
 
             if(isFacingRight)
             {
-                rb.AddForce(transform.right * 2.5f, ForceMode2D.Impulse);
+                rb.AddForce(transform.right * 3f, ForceMode2D.Impulse);
             }
             else
             {
-                rb.AddForce(-(transform.right) * 2.5f, ForceMode2D.Impulse);
+                rb.AddForce(-(transform.right) * 3f, ForceMode2D.Impulse);
             }
         }
     }

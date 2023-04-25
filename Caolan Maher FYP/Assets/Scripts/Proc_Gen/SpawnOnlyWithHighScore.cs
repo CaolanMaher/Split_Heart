@@ -16,9 +16,6 @@ public class SpawnOnlyWithHighScore : MonoBehaviour
         {
             if (PlayerPrefs.GetFloat("PlayerScore") >= 750)
             {
-
-                print("HIGH_SCORE");
-
                 // we set all tiles for this room to be children of the room
                 GameObject instance = (GameObject)Instantiate(objects[0], transform.position, Quaternion.identity);
                 instance.transform.parent = transform;

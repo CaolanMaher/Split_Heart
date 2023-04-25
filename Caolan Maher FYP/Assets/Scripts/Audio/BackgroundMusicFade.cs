@@ -40,8 +40,6 @@ public class BackgroundMusicFade : MonoBehaviour
             targetMusicVolume = 1;
         }
 
-        print(targetMusicVolume);
-
         musicVolumeSlider.value = targetMusicVolume;
 
         if (PlayerPrefs.HasKey("SFXVolume"))
@@ -90,14 +88,12 @@ public class BackgroundMusicFade : MonoBehaviour
         //float start = audioSource.volume;
         float start;
         bool result = backgroundAudio.GetFloat("music", out start);
-        print(start);
         if (result)
         {
             while (currentTime < 2f)
             {
                 currentTime += Time.deltaTime;
                 //audioSource.volume = Mathf.Lerp(start, 0, currentTime / 2f);
-                print(Mathf.Lerp(start, -80f, currentTime / 2f));
                 backgroundAudio.SetFloat("music", Mathf.Lerp(start, -80f, currentTime / 2f));
                 yield return null;
             }
