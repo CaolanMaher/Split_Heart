@@ -35,7 +35,6 @@ public class Dynamic_Difficulty_Adjustment : MonoBehaviour
 
         if(currentScene.name == "Level_2")
         {
-            PlayerPrefs.SetFloat("PlayerScore", 900);
             playerScore = PlayerPrefs.GetFloat("PlayerScore");
 
             player = GameObject.FindGameObjectWithTag("Player");
